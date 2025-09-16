@@ -11216,6 +11216,20 @@ body {
   z-index: 1;
 }
 
+.opportunities-section {
+  padding: 60px 20px;
+}
+
+.video-container {
+  max-width: 900px;   /* adjust to your preferred video width */
+  margin: 0 auto;
+}
+
+.opportunities-section h2 {
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
 .projects-section {
   padding: 5rem 0;
 }

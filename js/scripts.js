@@ -54,46 +54,69 @@ window.addEventListener('DOMContentLoaded', event => {
 });
 
 
+// Weather Forecast Script for Daet
+document.addEventListener("DOMContentLoaded", () => {
+  const API_KEY = "fdd7ecf54c471b5746f28023438ab8c5"; // your OWM key
+  const CITY = "Daet,PH";
 
-// Weather Forecast Script
-const API_KEY = "fdd7ecf54c471b5746f28023438ab8c5"; // replace with your real key
-const LAT = 14.11;  // Daet latitude
-const LON = 122.95; // Daet longitude
-
-fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${LAT}&lon=${LON}&units=metric&exclude=minutely,hourly,alerts&appid=${API_KEY}`)
-  .then(res => res.json())
-  .then(data => {
-    // Today
-    const today = data.current;
-    const weatherToday = document.getElementById("weather-today");
-    if (weatherToday) {
-      weatherToday.innerHTML = `
-        <p class="mb-1">Today: ${Math.round(today.temp)}°C</p>
-        <p class="mb-2">${today.weather[0].description}</p>
-      `;
-    }
-
-    // 3-day forecast
-    const forecastDiv = document.getElementById("weather-forecast");
-    if (forecastDiv) {
-      forecastDiv.innerHTML = "";
-      data.daily.slice(1, 4).forEach((day, i) => {
-        const date = new Date(day.dt * 1000);
-        const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
-        forecastDiv.innerHTML += `
-          <div>
-            <strong>${weekday}</strong><br>
-            ${Math.round(day.temp.day)}°C<br>
-            <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}.png" alt="">
-          </div>
+  // Get 5-day forecast (3-hour intervals)
+  fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${CITY}&units=metric&appid=${API_KEY}`)
+    .then(res => res.json())
+    .then(data => {
+      // Today (from first forecast item)
+      const today = data.list[0];
+      const weatherToday = document.getElementById("weather-today");
+      if (weatherToday) {
+        weatherToday.innerHTML = `
+          <p class="mb-1">Today: ${Math.round(today.main.temp)}°C</p>
+          <p class="mb-2">${today.weather[0].description}</p>
         `;
+      }
+
+      // Next 3 days (pick noon forecasts ~12:00)
+      const forecastDiv = document.getElementById("weather-forecast");
+      if (forecastDiv) {
+        forecastDiv.innerHTML = "";
+
+        const noonForecasts = data.list.filter(item => item.dt_txt.includes("12:00:00"));
+        noonForecasts.slice(0, 3).forEach(day => {
+          const date = new Date(day.dt * 1000);
+          const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+
+          forecastDiv.innerHTML += `
+            <div class="text-center mx-1">
+              <strong>${weekday}</strong><br>
+              ${Math.round(day.main.temp)}°C<br>
+              <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}.png" alt="${day.weather[0].description}">
+            </div>
+          `;
+        });
+      }
+    })
+    .catch(err => {
+      console.error("Weather API error:", err);
+      const weatherToday = document.getElementById("weather-today");
+      if (weatherToday) {
+        weatherToday.innerHTML = "<p>Weather unavailable</p>";
+      }
+    });
+});
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const video = document.getElementById("opportunityVideo");
+
+    // Intersection Observer to detect when video is visible
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          video.play().catch(err => console.log("Autoplay blocked:", err));
+        } else {
+          video.pause();
+        }
       });
-    }
-  })
-  .catch(err => {
-    console.error("Weather API error:", err);
-    const weatherToday = document.getElementById("weather-today");
-    if (weatherToday) {
-      weatherToday.innerHTML = "<p>Weather unavailable</p>";
-    }
+    }, { threshold: 0.5 }); // 50% visible = considered "in view"
+
+    observer.observe(video);
   });
