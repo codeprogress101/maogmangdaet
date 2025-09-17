@@ -11191,31 +11191,57 @@ body {
 
 
 }
-
+/* =========================
+   FOOTER STYLING
+   ========================= */
 .site-footer {
-  background: #0e0f1a;
-  color: #fff;
+  background-color: #0d0d16;
+  color: #ffffff;
   padding: 40px 20px;
   font-family: Arial, sans-serif;
 }
 
 .footer-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 30px;
-  max-width: 1200px;
-  margin: auto;
 }
 
 .footer-col h4 {
+  margin-bottom: 15px;
   font-size: 16px;
-  margin-bottom: 10px;
-  color: #f9f9f9;
+  font-weight: bold;
+  color: #ffffff;
 }
 
+.footer-col p,
+.footer-col a {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #cccccc;
+  text-decoration: none;
+}
+
+.footer-col a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.footer-logo {
+  max-height: 70px;
+  margin: 5px 0;
+}
+
+.footer-badge {
+  max-height: 80px;
+  margin: 10px 0;
+}
+
+/* Remove bullets from lists */
 .footer-col ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .footer-col ul li {
@@ -11223,32 +11249,137 @@ body {
 }
 
 .footer-col ul li a {
-  color: #bbb;
+  color: #cccccc;
   text-decoration: none;
+  font-size: 14px;
 }
 
 .footer-col ul li a:hover {
-  color: #fff;
+  color: #ffffff;
+  text-decoration: underline;
 }
 
-.footer-logo {
-  max-width: 120px;
-  margin-bottom: 10px;
-}
-
+/* Social Media Icons */
 .social-icons a {
-  color: #fff;
   margin-right: 10px;
   font-size: 18px;
+  color: #ffffff;
 }
 
+.social-icons a:hover {
+  color: #ffcc00;
+}
+
+/* Footer Bottom */
 .footer-bottom {
   text-align: center;
-  padding-top: 20px;
   border-top: 1px solid #333;
   margin-top: 30px;
-  font-size: 14px;
+  padding-top: 15px;
+  font-size: 13px;
+  color: #cccccc;
 }
+
+/* =========================
+   COLUMN 5 (LOGOS + TEXT)
+   ========================= */
+.footer-logos {
+  display: flex;
+  flex-direction: row; /* side by side on large screens */
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  text-align: center;
+}
+
+.footer-logo-box {
+  flex: 1;
+}
+
+.footer-logo-box img {
+  max-height: 80px;
+  display: block;
+  margin: 0 auto 8px auto;
+}
+
+.footer-logo-box p {
+  font-size: 14px;
+  color: #cccccc;
+}
+
+.footer-logo-box a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.footer-logo-box a:hover {
+  text-decoration: underline;
+}
+/* Footer Links */
+.footer-col a,
+.footer-logo-box a {
+  color: #cccccc;
+  text-decoration: none;
+  font-size: 14px;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+/* Hover effect: color + underline animation */
+.footer-col a:hover,
+.footer-logo-box a:hover {
+  color: #ffffff;
+}
+
+.footer-col a::after,
+.footer-logo-box a::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: #ffffff;
+  transition: width 0.3s ease;
+}
+
+.footer-col a:hover::after,
+.footer-logo-box a:hover::after {
+  width: 100%;
+}
+
+/* =========================
+   RESPONSIVE LAYOUTS
+   ========================= */
+@media (max-width: 992px) {
+  .footer-container {
+    grid-template-columns: repeat(2, 1fr);
+    text-align: center;
+  }
+  .footer-col {
+    margin-bottom: 20px;
+  }
+  .footer-logos {
+    flex-direction: column; /* stack logos on medium screens */
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .social-icons {
+    justify-content: center;
+    display: flex;
+  }
+  .footer-logos {
+    flex-direction: column; /* stack logos on mobile */
+    align-items: center;
+    gap: 20px;
+  }
+}
+
 
 
 .social-icon {
@@ -11337,44 +11468,277 @@ body {
   border: 0;
 }
 
-.contact-section {
-  padding-top: 5rem;
-}
-.contact-section .card {
-  border: 0;
-  border-bottom: 0.25rem solid #64a19d;
-}
-.contact-section .card h4, .contact-section .card .h4 {
-  font-size: 0.8rem;
-  font-family: "Varela Round", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  text-transform: uppercase;
-  letter-spacing: 0.15rem;
-}
-.contact-section .card hr {
-  opacity: 1;
-  border-color: #64a19d;
-  border-width: 0.25rem;
-  width: 3rem;
-}
-.contact-section .social {
-  margin-top: 5rem;
-}
-.contact-section .social a {
+/* =========================
+   EMERGENCY HOTLINES SECTION
+   ========================= */
+.hotlines-section {
+  background-color: #f8f8f8;
+  padding: 60px 20px;
   text-align: center;
-  height: 3rem;
-  width: 3rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 100%;
-  line-height: 3rem;
-  color: rgba(255, 255, 255, 0.3);
 }
-.contact-section .social a:hover {
-  color: rgba(255, 255, 255, 0.5);
+
+.hotlines-title {
+  font-size: 36px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #b30000;
+  margin-bottom: 50px;
+  letter-spacing: 2px;
 }
-.contact-section .social a:active {
+
+.hotline-icon {
+  font-size: 40px;
+  margin-bottom: 15px;
+  color: #000;
+}
+
+.hotline-heading {
+  color: #b30000;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.hotlines-section p {
+  font-size: 15px;
+  margin: 3px 0;
+  color: #001f3f; /* dark blue for numbers */
+}
+
+/* Button */
+.hotlines-btn {
+  display: inline-block;
+  padding: 12px 28px;
+  border: 2px solid #000;
+  background: transparent;
+  color: #000;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.hotlines-btn:hover {
+  background: #000;
   color: #fff;
 }
 
+/* Responsive */
+@media (max-width: 768px) {
+  .hotlines-title {
+    font-size: 28px;
+  }
+  .hotline-icon {
+    font-size: 32px;
+  }
+}
+
+
 .footer {
   padding: 5rem 0;
+}
+
+/* =========================
+   MAOGMANG DAET SECTION
+   ========================= */
+.daet-section {
+  background-color: #fd7e14;
+  min-height: calc(100vh - 70px); /* subtract navbar height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertically center content */
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  padding: 60px 20px;
+}
+
+.daet-section .section-subtitle {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.daet-section .section-title {
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.daet-section .section-desc {
+  font-size: 16px;
+  max-width: 800px;
+  margin: 0 auto 40px auto;
+  line-height: 1.6;
+}
+
+/* =========================
+   GALLERY LAYOUT
+   ========================= */
+.gallery-layout {
+  display: grid;
+  grid-template-columns: 3fr 2fr; /* large photo left, small photos right */
+  gap: 25px;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: stretch;
+}
+
+/* Large Photo (fixed height rectangle) */
+.gallery-large {
+  width: 100%;
+  height: 500px; /* fixed height */
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.gallery-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.gallery-large img.fade-out {
+  opacity: 0;
+  transform: scale(1.05); /* zoom out effect */
+}
+
+/* Small Photos (2x2 grid, squares) */
+.gallery-small {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.gallery-small img {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* force perfect squares */
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.gallery-small img:hover {
+  transform: scale(1.05);
+}
+
+/* =========================
+   EXPLORE DAET BUTTON
+   ========================= */
+.explore-btn-wrapper {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.explore-btn {
+  display: inline-block;
+  padding: 14px 30px;
+  background-color: #fff;
+  color: #fd7e14;
+  font-weight: bold;
+  font-size: 16px;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 8px;
+  border: 2px solid #fff;
+  transition: all 0.3s ease;
+}
+
+.explore-btn:hover {
+  background-color: transparent;
+  color: #fff;
+  border-color: #fff;
+}
+
+/* =========================
+   RESPONSIVE LAYOUTS
+   ========================= */
+
+/* Tablet */
+@media (max-width: 992px) {
+  .daet-section .section-title {
+    font-size: 32px;
+  }
+  .daet-section .section-desc {
+    font-size: 15px;
+  }
+  .gallery-layout {
+    grid-template-columns: 1fr; /* stack */
+    gap: 25px;
+  }
+  .gallery-large {
+    height: 400px; /* shorter on tablets */
+  }
+  .gallery-small {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .daet-section {
+    padding: 40px 15px;
+  }
+  .daet-section .section-title {
+    font-size: 26px;
+  }
+  .daet-section .section-desc {
+    font-size: 14px;
+  }
+  .gallery-layout {
+    gap: 20px;
+  }
+  .gallery-large {
+    height: 300px; /* shorter on mobile */
+  }
+  .gallery-small {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+}
+
+
+/* Hide before animation starts */
+.animate-on-scroll {
+  opacity: 0;
+}
+
+/* Visible when triggered */
+.animate-on-scroll.visible {
+  opacity: 1;
+}
+
+
+.list-group-item {
+  border-radius: 6px;
+  border: 1px solid #eee;
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  padding: 1rem 1.25rem;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa;
+  transform: translateX(5px);
+}
+
+.about-section h5 {
+  margin-bottom: 1rem;
+}
+
+.about-section a {
+  text-decoration: none;
+  color: inherit;
+}
+.about-section a:hover {
+  color: #fd7e14;
+}
+.about-header{
+  margin-top: 4.6%;
 }

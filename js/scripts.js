@@ -120,3 +120,63 @@ document.addEventListener("DOMContentLoaded", () => {
 
     observer.observe(video);
   });
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const largePhoto = document.getElementById("large-photo");
+  const smallPhotos = document.querySelectorAll(".gallery-small img");
+
+  let index = 0;
+
+  setInterval(() => {
+    // Add fade+zoom effect
+    largePhoto.classList.add("fade-out");
+
+    setTimeout(() => {
+      // Swap src between large and current small photo
+      const tempSrc = largePhoto.src;
+      largePhoto.src = smallPhotos[index].src;
+      smallPhotos[index].src = tempSrc;
+
+      // Remove fade-out to show fade-in
+      largePhoto.classList.remove("fade-out");
+
+      // Move to next small photo
+      index = (index + 1) % smallPhotos.length;
+    }, 800); // matches CSS transition time
+  }, 4000); // every 4s
+});
+
+
+
+
+// what's new in daet
+document.addEventListener("DOMContentLoaded", () => {
+  const elements = document.querySelectorAll(".animate-on-scroll");
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // run one-time fade animation
+          entry.target.classList.add("animate__animated", entry.target.dataset.animate, "visible");
+
+          // if extra infinite animation is needed (like pulse), add it after fade finishes
+          if (entry.target.dataset.extra) {
+            const extras = entry.target.dataset.extra.split(" ");
+            setTimeout(() => {
+              // remove the fadeInUp class so it doesn’t loop
+              entry.target.classList.remove(entry.target.dataset.animate);
+              entry.target.classList.add(...extras);
+            }, 1000); // matches Animate.css fadeInUp duration
+          }
+
+          observer.unobserve(entry.target); // stop observing after first run
+        }
+      });
+    },
+    { threshold: 0.2 }
+  );
+
+  elements.forEach((el) => observer.observe(el));
+});
