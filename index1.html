@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="Official Website of the Municipality of Daet" />
+  <meta name="author" content="LGU Daet" />
+  <title>Maogmang Daet</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,900&display=swap" rel="stylesheet" />
+
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Custom CSS -->
+  <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body id="page-top">
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm" id="mainNav">
+    <div class="container px-4 px-lg-5">
+      <!-- Logo + Brand -->
+      <a class="navbar-brand d-flex align-items-center" href="#page-top">
+        <img src="assets/img/lgu logo.png" alt="LGU Logo" class="me-2" style="height:40px;">
+        Maogmang Daet
+      </a>
+
+      <!-- Mobile Toggle -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" 
+              aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#projects">Government</a></li>
+          <li class="nav-item"><a class="nav-link" href="#projects">News & Updates</a></li>
+          <li class="nav-item"><a class="nav-link" href="#signup">Transparency</a></li>
+          <li class="nav-item"><a class="nav-link" href="#tourism">Tourism</a></li>
+          <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ================= HEADER ================= -->
+  <header class="masthead d-flex align-items-center justify-content-center text-center">
+    <div class="container">
+      <div class="masthead-button">
+        <a class="btn btn-primary btn-lg" href="#about">Get Started</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= ABOUT ================= -->
+  <section class="about-section text-center" id="about">
+    <video autoplay muted loop playsinline class="w-100">
+      <source src="assets/video/BACKGROUND VIDEO.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="container px-4 px-lg-5 mt-4">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <h2 class="text-white mb-4">WELCOME TO DAET</h2>
+          <p>
+            Ang Bayan ng Daet ang kabisera ng lalawigan ng Camarines Norte, na nagsisilbing sentro ng
+            pamahalaan, kalakalan, at edukasyon sa rehiyon. Kilala ang bayan sa kasaysayan bilang tahanan ng
+            kauna-unahang bantayog para kay Dr. Jose Rizal sa bansa, na sumasalamin sa makabayang kultura ng mga
+            mamamayan nito.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHAT'S NEW ================= -->
+  <section class="updates-section bg-light py-5" id="updates">
+    <div class="container px-4 px-lg-5">
+      <h2 class="text-center mb-5 animate-on-scroll" data-animate="animate__fadeInDown">
+        What's New in Daet?
+      </h2>
+      <div class="row">
+        <!-- Left column (updates) -->
+        <div class="col-lg-8">
+          <div class="list-group mb-3">
+            <div class="list-group-item">
+              <h5>Executive Issuances</h5>
+              <p class="small">2025 Executive Orders</p>
+            </div>
+          </div>
+          <!-- Add other news blocks here (Hearings, Ordinances, etc.) -->
+        </div>
+
+        <!-- Right column (weather + map + socials) -->
+        <div class="col-lg-4">
+          <div class="card text-center mb-3">
+            <div class="card-body bg-primary text-white">
+              <h5 class="card-title mb-2">Daet Weather</h5>
+              <div id="weather-today"><p class="mb-2">Loading...</p></div>
+              <div id="weather-forecast" class="d-flex justify-content-around small flex-wrap"></div>
+            </div>
+          </div>
+          <div class="text-center mb-3">
+            <a href="https://www.pagasa.dost.gov.ph/" target="_blank" class="btn btn-sm bg-primary text-white">
+              DOST PAGASA Weather Update
+            </a>
+          </div>
+          <div class="card">
+            <div class="card-header bg-primary text-white text-center">📍 Location of Daet</div>
+            <div class="card-body p-0">
+              <div class="ratio ratio-16x9">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!..." style="border:0;" allowfullscreen loading="lazy"></iframe>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mt-4">
+            <h6>Follow Us</h6>
+            <a href="https://www.facebook.com/lgudaet" target="_blank"><i class="fab fa-facebook-f me-2"></i></a>
+            <a href="https://twitter.com/lgudaet" target="_blank"><i class="fab fa-twitter me-2"></i></a>
+            <a href="https://www.instagram.com/lgudaet" target="_blank"><i class="fab fa-instagram me-2"></i></a>
+            <a href="https://www.youtube.com/@lgudaet" target="_blank"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROJECTS (News) ================= -->
+  <section class="projects-section bg-light py-5" id="projects">
+    <div class="container px-4 px-lg-5">
+      <h2 class="text-center mb-5">News and Updates</h2>
+      <!-- News Rows -->
+      <div class="row mb-5 align-items-center">
+        <div class="col-lg-7"><img class="img-fluid rounded" src="assets/img/news1.png" alt="Mangrove Planting"></div>
+        <div class="col-lg-5">
+          <h4>𝐌𝐀𝐍𝐆𝐑𝐎𝐕𝐄 𝐓𝐑𝐄𝐄 𝐏𝐋𝐀𝐍𝐓𝐈𝐍𝐆 𝐀𝐂𝐓𝐈𝐕𝐈𝐓𝐘</h4>
+          <p class="text-muted">Isinagawa po natin ngayong umaga ang Mangrove Tree Planting Activity...</p>
+          <a href="full-article.html" class="text-primary">See more...</a>
+        </div>
+      </div>
+      <!-- Add more news rows (fertilizer distribution, anniversary parade, etc.) -->
+    </div>
+  </section>
+
+  <!-- ================= OPPORTUNITIES ================= -->
+  <section class="opportunities-section text-center py-5" id="opportunities" style="background-color:#f8f9fa;">
+    <div class="container">
+      <h2 class="mb-4">STARTUPS & OTHER OPPORTUNITIES</h2>
+      <div class="ratio ratio-16x9 mb-4">
+        <video id="opportunityVideo" loop playsinline class="rounded shadow w-100">
+          <source src="assets/video/Seminar.mp4" type="video/mp4">
+        </video>
+      </div>
+      <a href="#more-opportunities" class="btn btn-primary btn-lg">Learn More</a>
+    </div>
+  </section>
+
+  <!-- ================= DAET SECTION ================= -->
+  <section class="daet-section py-5" id="daet">
+    <div class="container">
+      <h5 class="text-muted">THE CAPITAL TOWN OF THE GATEWAY TO BICOLANDIA</h5>
+      <h2 class="mb-4">MAOGMANG DAET</h2>
+      <p class="mb-4">
+        The Municipality of Daet is a vibrant town known for its history, culture, 
+        and warm community spirit. Famous for the first Rizal monument, its golden sandy beaches...
+      </p>
+      <div class="row g-3">
+        <div class="col-lg-8"><img src="assets/img/daet1.jpg" class="img-fluid rounded w-100" alt="Daet Large"></div>
+        <div class="col-lg-4 d-flex flex-wrap gap-2">
+          <img src="assets/img/daet2.jpg" class="img-fluid rounded w-50" alt="">
+          <img src="assets/img/daet3.jpg" class="img-fluid rounded w-50" alt="">
+          <img src="assets/img/daet4.jpg" class="img-fluid rounded w-50" alt="">
+          <img src="assets/img/daet5.jpg" class="img-fluid rounded w-50" alt="">
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <a href="#tourism" class="btn btn-outline-primary">Explore Daet</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOTLINES ================= -->
+  <section class="hotlines-section py-5 bg-light">
+    <div class="container px-4 px-lg-5 text-center">
+      <h2 class="mb-5">EMERGENCY HOTLINES</h2>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <i class="fas fa-mobile-alt fa-2x mb-2"></i>
+          <h5>Mobile (COMCEN)</h5>
+          <p>+63 908-525-3000 | Smart</p>
+          <p>+63 963-220-9700 | TNT</p>
+        </div>
+        <div class="col-md-4 mb-4">
+          <i class="fas fa-phone-alt fa-2x mb-2"></i>
+          <h5>Landline (COMCEN)</h5>
+          <p>(054) 472-3000</p>
+          <p>(054) 8712050 local 3000 (PLDT)</p>
+        </div>
+        <div class="col-md-4 mb-4">
+          <i class="fas fa-fire-alt fa-2x mb-2"></i>
+          <h5>Bureau of Fire Protection</h5>
+          <p>(+63) 923-0839429 | (054) 473-8472</p>
+          <p>(054) 473-2633 | (054) 8716454</p>
+        </div>
+      </div>
+      <a href="#important-numbers" class="btn btn-primary">List of Important Numbers</a>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer bg-dark text-white py-4">
+    <div class="container text-center">
+      <p class="mb-1">REPUBLIC OF THE PHILIPPINES — All content is in the public domain unless otherwise stated.</p>
+      <p><a href="#" class="text-white">Data Privacy Policy</a> | <a href="#" class="text-white">Terms and Conditions</a></p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Core theme JS -->
+  <script src="js/scripts.js" defer></script>
+</body>
+</html>

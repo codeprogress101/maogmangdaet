@@ -1,0 +1,180 @@
+/* ==============================
+   RESPONSIVE FIXES (Overrides)
+   ============================== */
+
+/* Medium screens (tablets, ≤ 992px) */
+@media (max-width: 992px) {
+  /* Navbar brand font + logo */
+  .navbar-brand {
+    font-size: 1rem;
+  }
+
+  .navbar-brand img {
+    height: 35px;
+  }
+
+  /* Ensure project/news sections stack nicely */
+  .projects-section .row > div {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Gallery: stack large and small */
+  .gallery-layout {
+    flex-direction: column;
+  }
+
+  .gallery-large,
+  .gallery-small {
+    width: 100%;
+  }
+}
+
+/* Small screens (phones, ≤ 768px) */
+@media (max-width: 768px) {
+  /* Masthead button resize */
+  .masthead .btn {
+    padding: 0.5rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  /* Section titles scale */
+  .opportunities-section h2,
+  .daet-section h2,
+  .hotlines-section h2,
+  .projects-section h2 {
+    font-size: 1.5rem;
+  }
+
+  /* News/Updates list items */
+  .list-group-item h5 {
+    font-size: 1rem;
+  }
+
+  /* Hotlines icons smaller */
+  .hotline-icon {
+    font-size: 1.5rem;
+  }
+}
+
+/* Extra small screens (≤ 576px) */
+@media (max-width: 576px) {
+  /* Navbar logo + brand scaling */
+  .navbar-brand img {
+    height: 28px;
+  }
+
+  .navbar-brand {
+    font-size: 0.85rem;
+  }
+
+  /* Footer centered */
+  .site-footer {
+    text-align: center;
+  }
+
+  .site-footer .footer-col {
+    margin-bottom: 1rem;
+  }
+
+  /* Hotlines spacing */
+  .hotlines-section .col-md-4 {
+    margin-bottom: 2rem;
+  }
+}
+
+
+.navbar-dark .navbar-toggler-icon {
+  
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(0, 0, 0, 0.9)' stroke-width='2' stroke-linecap='round' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.broken-arrow {
+  height: 30px;    /* adjust to desired size */
+  margin: 0 5px;   /* space around arrow */
+  vertical-align: middle; /* align with text */
+}
+
+/* Default: single image takes full width */
+.history-img {
+  flex: 1 1 100%;
+  max-width: 100%;
+  aspect-ratio: 16/9;   /* force same ratio */
+  object-fit: cover;    /* crop instead of squish */
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+/* If there are two images, let them share space */
+.list-group-item img.history-img:nth-child(2),
+.list-group-item img.history-img:nth-child(1):nth-last-child(2) {
+  flex: 1 1 48%;
+  max-width: 48%;
+}
+
+/* On small screens, stack instead of squeezing */
+@media (max-width: 576px) {
+  .list-group-item img.history-img {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+
+
+#backToTop {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: none;
+  z-index: 9999;
+
+  /* Circle shape */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+
+  /* Center the icon */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 1.2rem;
+  padding: 0;
+
+  /* Smooth animation */
+  transition: all 0.3s ease;
+}
+
+/* Hover effects */
+#backToTop:hover {
+  transform: scale(1.15);          /* grow slightly */
+  background-color: #474747;       /* darker blue */
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3); /* stronger shadow */
+}
+
+
+/* Make modal background darker */
+#imageModal .modal-content {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* Center the image and add smooth effect */
+#modalImage {
+  max-height: 90vh;      /* never overflow screen height */
+  max-width: 100%;       /* responsive */
+  object-fit: contain;   /* scale without cropping */
+  border-radius: 0.5rem; /* rounded corners */
+  transition: transform 0.3s ease;
+}
+
+/* Add zoom effect on hover */
+#modalImage:hover {
+  transform: scale(1.02);
+}
+
+/* Optional: remove default Bootstrap focus outline on modal close button */
+#imageModal .btn-close {
+  filter: invert(1);  /* make close button white on dark backdrop */
+}

@@ -180,3 +180,93 @@ document.addEventListener("DOMContentLoaded", () => {
 
   elements.forEach((el) => observer.observe(el));
 });
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const modalEl = document.getElementById('imageModal');
+  const modalImage = document.getElementById('modalImage');
+
+  if (!modalEl || !modalImage) {
+    console.warn('Image modal or modal image element not found. Make sure #imageModal and #modalImage exist.');
+    return;
+  }
+
+  // Bootstrap modal instance
+  const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+  /**
+   * Helper: given a clicked element, return the best image source.
+   * Supports:
+   *  - <img> (uses currentSrc || src)
+   *  - elements with data-full or data-src (useful for lazy loading or high-res)
+   *  - <picture> children -> still works because clicked element should be <img>
+   */
+  function getImageSource(el) {
+    if (!el) return '';
+
+    // If element has explicit high-res URL
+    if (el.dataset && (el.dataset.full || el.dataset.src)) {
+      return el.dataset.full || el.dataset.src;
+    }
+
+    // If it's an <img>, prefer currentSrc (works with <picture> and srcset)
+    if (el.tagName && el.tagName.toLowerCase() === 'img') {
+      return el.currentSrc || el.src || '';
+    }
+
+    // If background image style (e.g., div with background-image: url(...))
+    const bg = window.getComputedStyle(el).backgroundImage;
+    if (bg && bg !== 'none') {
+      // extract url("...") content
+      const match = bg.match(/url\(["']?(.*?)["']?\)/);
+      if (match) return match[1];
+    }
+
+    return '';
+  }
+
+  // Event delegation: listen for clicks on any image you want to open in modal.
+  // Use a selector that matches your images (adjust 'history-img' if needed).
+  document.addEventListener('click', (evt) => {
+    // Try to find the nearest clickable image element:
+    const clicked = evt.target.closest('img.history-img, [data-image-modal], .history-img'); 
+    // - img.history-img : <img class="history-img">
+    // - [data-image-modal] : elements explicitly marked to open modal
+    // - .history-img : fallback if image is a div with background-image
+
+    if (!clicked) return;
+    evt.preventDefault();
+
+    const src = getImageSource(clicked);
+    if (!src) {
+      console.warn('No image source found for clicked element', clicked);
+      return;
+    }
+
+    // Set modal image src and alt
+    modalImage.src = src;
+    modalImage.alt = clicked.alt || clicked.dataset.alt || '';
+
+    // If the clicked <img> had a srcset, copy it to modal for responsive high-res
+    if (clicked.tagName && clicked.tagName.toLowerCase() === 'img') {
+      if (clicked.hasAttribute('srcset')) {
+        modalImage.setAttribute('srcset', clicked.getAttribute('srcset'));
+      } else {
+        modalImage.removeAttribute('srcset');
+      }
+    } else {
+      modalImage.removeAttribute('srcset');
+    }
+
+    // Show the bootstrap modal
+    bsModal.show();
+  });
+
+  // Clear modal image on hide to free memory / stop downloads
+  modalEl.addEventListener('hidden.bs.modal', () => {
+    modalImage.src = '';
+    modalImage.removeAttribute('srcset');
+    modalImage.alt = '';
+  });
+});

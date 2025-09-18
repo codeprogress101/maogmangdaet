@@ -3886,6 +3886,11 @@ textarea.form-control-lg {
   white-space: nowrap;
   width: 6%;
 }
+/* Navbar logo sizing */
+.navbar-brand img {
+  height: 70px;   /* adjust to your liking */
+  margin-right: 0.5rem;
+}
 .navbar-brand-logo:hover, .navbar-brand:focus {
   cursor: pointer;
 }
@@ -11738,7 +11743,4 @@ body {
 }
 .about-section a:hover {
   color: #fd7e14;
-}
-.about-header{
-  margin-top: 4.6%;
 }

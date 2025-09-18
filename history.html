@@ -8,6 +8,7 @@
   <!-- Font Awesome icons -->
   <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+ 
   <!-- Google fonts -->
   <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,700" rel="stylesheet" />
@@ -17,6 +18,14 @@
 </head>
 <body id="page-top">
 
+            <!-- Reusable Image Modal -->
+                <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content bg-transparent border-0 text-center">
+                    <img id="modalImage" src="" class="img-fluid rounded shadow" alt="Zoomed image">
+                    </div>
+                </div>
+                </div>
  
             <!-- ================= NAVBAR ================= -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-white fixed-top shadow-sm" id="mainNav">
@@ -86,7 +95,8 @@
     <nav aria-label="breadcrumb" class="mb-4">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Know Daet</li>
+        <li class="breadcrumb-item"><a href="about.html">Know Daet</a></li>
+        <li class="breadcrumb-item active" aria-current="page">History</li>
       </ol>
     </nav>
 
@@ -94,30 +104,129 @@
       
       <!-- Left Column -->
       <div class="about-left col-lg-8">
-        <h2 class="text-dark mb-4">Welcome to Daet</h2>
+       
         <p class="text-muted mb-5">
           Learn more about the history, culture, and governance of Daet.
         </p>
 
         <!-- Card-style Links -->
         <div class="list-group">
-          <a href="history.html" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
-            History
-            <span class="text-danger fw-bold">&gt;</span>
-          </a>
-          <a href="barangays.html" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
-            Barangays
-            <span class="text-danger fw-bold">&gt;</span>
-          </a>
-          <a href="socio-economic.html" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
-            Socio-Economic Profile
-            <span class="text-danger fw-bold">&gt;</span>
-          </a>
-          <a href="mayors-gallery.html" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
-            Mayor's Gallery
-            <span class="text-danger fw-bold">&gt;</span>
-          </a>
+          <h2 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+            History of Daet
+
+            <img src="assets/img/arrow.png" alt="arrow" class="broken-arrow">
+          </h2>
+           <div class="list-group-item d-flex justify-content-center align-items-center gap-3 flex-wrap">
+                    <img src="assets/img/oldbantayog.jpg" alt="Old Bantayog"
+                        class="history-img img-fluid rounded shadow-sm"
+                        data-bs-toggle="modal" data-bs-target="#imageModal" >
+                        
+                    <img src="assets/img/old photos/Daet Town Proper 1970.jpg" alt="Old Bantayog 2"
+                        class="history-img img-fluid rounded shadow-sm"
+                        data-bs-toggle="modal" data-bs-target="#imageModal" >
+            </div>
+            
+          <p class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+            Daet is the capital town of Camarines Norte and one of the oldest settlements in the Bicol Region. It holds an important place in Philippine history and has grown into a center of culture, trade, and local governance.
+          </p>
+
+          
+          
         </div>
+
+        <div class="list-group">
+          <h2 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+            Early Beginnings
+
+            <i class="fas fa-seedling text-success"></i>
+          </h2>
+
+          <div class="list-group-item d-flex justify-content-center align-items-center gap-3 flex-wrap">
+                    <img src="assets/img/old photos/Villagers Along Main Road West of Daet Camarines Norte May 1934.jpg" alt="Old Bantayog"
+                        class="history-img img-fluid rounded shadow-sm"
+                        data-bs-toggle="modal" data-bs-target="#imageModal" >
+                    
+            </div>
+
+          <p class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+            The name Daet is believed to come from a Bikol word meaning “to make close” or “to bind,” reflecting the close-knit communities that originally lived in the area. Long before Spanish colonization, early settlers were already thriving through farming, fishing, and local trade.
+          </p> 
+        </div>
+
+        <div class="list-group">
+          <h2 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+            Spanish Era
+            <i class="bi bi-building"></i>
+          </h2>
+
+          <p class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+            During the Spanish period, Daet became a mission town where Christianity was introduced. It officially became a town in the 1600s and later developed as a center of religion and governance. Many early churches and buildings from this era influenced the town’s culture and design.
+          </p> 
+        </div>
+
+        <div class="list-group">
+          <h2 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+            American Period and World War II
+            <i class="bi bi-shield text-danger fs-3"></i>
+          </h2>
+
+          <div class="list-group-item d-flex justify-content-center align-items-center gap-3 flex-wrap">
+                    <img src="assets/img/old photos/Daet to Basud Road Camarines Norte Bicol Region May 17 1934.jpg" alt="Old Bantayog"
+                        class="history-img img-fluid rounded shadow-sm"
+                        data-bs-toggle="modal" data-bs-target="#imageModal" >
+                    
+            </div>
+            
+
+          <p class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+            Under American rule, Daet saw improvements in education and infrastructure. Schools, roads, and public services were developed. During World War II, the town suffered under Japanese occupation, but brave local fighters resisted and helped liberate the area.
+          </p> 
+        </div>
+
+        <div class="list-group">
+          <h2 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+           Post-War to Present
+           <i class="bi bi-clock-history text-primary fs-2"></i>
+          </h2>
+
+            <div class="list-group-item d-flex justify-content-center align-items-center gap-3 flex-wrap">
+                    <img src="assets/img/old photos/Daet, Camarines Norte  March 14 1941 taken before WW2.jpg" alt="Old Bantayog"
+                        class="history-img img-fluid rounded shadow-sm"
+                        data-bs-toggle="modal" data-bs-target="#imageModal" >
+                    
+            </div>
+
+          <p class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+            After the war, Daet grew rapidly. It became the hub of government, education, business, and tourism in the province. One of its proudest landmarks is the first monument ever built in honor of Dr. José Rizal, erected in 1898.
+          </p> 
+
+          <p class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+            Today, Daet is a progressive town known for its rich history, friendly people, and beautiful destinations like Bagasbas Beach and the Pinyasan Festival, which celebrates the town’s famous sweet pineapples.
+          </p> 
+        </div>
+
+        <div class="list-group">
+          <h2 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+            A Town of Pride and Progress
+            <i class="bi bi-graph-up-arrow text-success fs-2"></i>
+          </h2>
+
+            <div class="list-group-item d-flex justify-content-center align-items-center gap-3 flex-wrap">
+                    <img src="assets/img/daet2.jpg" alt="Old Bantayog"
+                        class="history-img img-fluid rounded shadow-sm"
+                        data-bs-toggle="modal" data-bs-target="#imageModal" >
+                    <img src="assets/img/daet3.jpg" alt="Old Bantayog"
+                        class="history-img img-fluid rounded shadow-sm"
+                        data-bs-toggle="modal" data-bs-target="#imageModal" >
+                    
+            </div>
+
+          <p class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 shadow-sm">
+            From its roots as a small riverside settlement to becoming the heart of Camarines Norte, Daet continues to honor its past while moving toward a brighter future.
+          </p> 
+        </div>
+        
+
       </div>
 
       <!-- Right Column (Sidebar) -->
@@ -150,43 +259,7 @@
 
 
 
-  <!-- BARANGAYS SECTION -->
-  <section class="projects-section bg-black text-white" id="barangays">
-    <div class="container px-4 px-lg-5">
-      <h2 class="text-center mb-5">Barangays of Daet</h2>
-      <div class="row gx-4 gx-lg-5">
-
-        <!-- Barangay Cards (25 total with placeholders) -->
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Alawihao</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Awitan</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Bagasbas</h4><p class="small text-muted">Famous for Bagasbas Beach 🏖</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay I</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay II</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay III</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay IV</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay V</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay VI</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay VII</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay VIII</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay IX</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay X</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XI</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XII</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XIII</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XIV</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XV</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XVI</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XVII</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XVIII</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XIX</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XX</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XXI</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XXII</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XXIII</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-        <div class="col-md-6 col-lg-4 mb-4"><div class="card h-100"><div class="card-body text-center"><h4>Barangay XXIV</h4><p class="small text-muted">Info placeholder.</p></div></div></div>
-      </div>
-    </div>
-  </section>
+  
 
          <!-- Footer Section -->
 <footer class="site-footer">
@@ -279,7 +352,8 @@
   </div>
 </footer>
 
-<button id="backToTop" class="btn btn-primary rounded-circle shadow">
+
+    <button id="backToTop" class="btn btn-primary rounded-circle shadow">
             <i class="bi bi-arrow-up"></i> <!-- using Bootstrap Icon -->
             </button>
 
@@ -301,7 +375,6 @@
       });
     });
   </script>
-
 
 
   <!-- Bootstrap core JS -->
