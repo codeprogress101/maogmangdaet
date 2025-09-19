@@ -341,3 +341,148 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+
+
+// trial for tourism
+
+// Optional smooth parallax effect
+document.addEventListener("scroll", () => {
+  const scrolled = window.scrollY;
+  document.querySelectorAll(".parallax").forEach(el => {
+    el.style.backgroundPositionY = -(scrolled * 0.3) + "px";
+  });
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const globeContainer = document.getElementById("globeViz");
+
+  // Initialize globe
+  const globe = Globe()(globeContainer)
+    .globeImageUrl("//unpkg.com/three-globe/example/img/earth-night.jpg") // Night Earth texture
+    .bumpImageUrl("//unpkg.com/three-globe/example/img/earth-topology.png") // 3D terrain
+    .backgroundColor("#ffffff") // Transparent/white background
+    .pointOfView({ lat: 14.1226, lng: 122.9553, altitude: 2 }); // Focus near Daet
+
+  // Marker for Daet, Camarines Norte
+  const markers = [
+    {
+      lat: 14.1226, // Daet latitude
+      lng: 122.9553, // Daet longitude
+      size: 0.5,
+      color: "red",
+      name: "Daet, Camarines Norte"
+    }
+  ];
+
+  globe.pointsData(markers)
+       .pointAltitude("size")
+       .pointColor("color");
+
+  // Tooltip on hover
+  globe.onPointHover(d => globeContainer.title = d ? d.name : "");
+});
+
+
+
+// 
+
+document.addEventListener("DOMContentLoaded", () => {
+  mapboxgl.accessToken =
+    "pk.eyJ1IjoiY29kZXByb2dyZXNzIiwiYSI6ImNtZnFqZmJ3ejBpNzAya292Znh5OWRwcWwifQ.SgOMS-LlR3P22epvz0UT2w";
+
+  const map = new mapboxgl.Map({
+    container: "map",
+    style: "mapbox://styles/mapbox/satellite-streets-v12",
+    center: [122.9553, 14.1226], // Daet
+    zoom: 12,
+    pitch: 60,
+    bearing: -20
+  });
+
+  map.addControl(new mapboxgl.NavigationControl());
+
+  // Directions plugin
+  const directions = new MapboxDirections({
+    accessToken: mapboxgl.accessToken,
+    unit: "metric",
+    profile: "mapbox/driving",
+    alternatives: true,
+    geometries: "geojson",
+    controls: { instructions: true }
+  });
+  map.addControl(directions, "top-left");
+
+  // Hotspots
+  const hotspots = [
+    {
+      name: "Bagasbas Beach",
+      desc: "Famous surfing destination with golden sand.",
+      coords: [122.9560, 14.1300],
+      color: "blue"
+    },
+    {
+      name: "First Rizal Monument",
+      desc: "Historical landmark honoring Dr. Jose Rizal (1898).",
+      coords: [122.9558, 14.1190],
+      color: "green"
+    },
+    {
+      name: "Pinyasan Festival Grounds",
+      desc: "Venue for the annual pineapple festival every June.",
+      coords: [122.9575, 14.1228],
+      color: "orange"
+    },
+    {
+      name: "Daet Town Center",
+      desc: "The capital town and provincial hub of Camarines Norte.",
+      coords: [122.9553, 14.1226],
+      color: "red"
+    }
+  ];
+
+  map.on("load", () => {
+    // 3D terrain
+    map.addSource("mapbox-dem", {
+      type: "raster-dem",
+      url: "mapbox://mapbox.terrain-rgb",
+      tileSize: 512,
+      maxzoom: 14
+    });
+    map.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
+
+    // Add markers + sidebar items
+    const sidebar = document.getElementById("hotspot-list");
+
+    hotspots.forEach((spot, index) => {
+      // Marker
+      new mapboxgl.Marker({ color: spot.color })
+        .setLngLat(spot.coords)
+        .setPopup(
+          new mapboxgl.Popup().setHTML(`
+            <h6>${spot.name}</h6>
+            <p>${spot.desc}</p>
+            <button onclick="setRoute(${spot.coords[0]}, ${spot.coords[1]})" class="btn btn-sm btn-primary mt-2">Get Directions</button>
+          `)
+        )
+        .addTo(map);
+
+      // Sidebar entry
+      const item = document.createElement("button");
+      item.className = "list-group-item list-group-item-action";
+      item.innerHTML = `<strong>${spot.name}</strong><br><small>${spot.desc}</small>`;
+      item.addEventListener("click", () => {
+        map.flyTo({ center: spot.coords, zoom: 15, pitch: 60, bearing: -20 });
+        directions.setDestination(spot.coords);
+      });
+      sidebar.appendChild(item);
+    });
+  });
+
+  // Function for "Get Directions" button inside popups
+  window.setRoute = (lng, lat) => {
+    directions.setDestination([lng, lat]);
+  };
+});
+

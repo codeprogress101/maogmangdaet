@@ -15,6 +15,15 @@
   <!-- Core theme CSS -->
   <link href="css/styles.css" rel="stylesheet" />
   <link href="css/responsive.css" rel="stylesheet" />
+
+
+
+  <link
+  rel="stylesheet"
+  href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css"
+/>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.js"></script>
+
 </head>
 <body id="page-top">
 
@@ -110,68 +119,117 @@
         </p>
 
       </div>
+    <!-- insert code -->
+ 
 
-          <!-- Search box -->
-<div class="d-flex justify-content-end mb-3">
-  <input type="text" id="searchInput" class="form-control" style="max-width:250px;" placeholder="Search...">
-</div>
+<!-- Hero Parallax Section -->
+<header class="parallax d-flex align-items-center justify-content-center text-white text-center">
+  <div class="container">
+    <h1 class="fw-bold display-3">Discover Daet</h1>
+    <p class="lead">Beaches, culture, and history all in one destination.</p>
+    <a href="#attractions" class="btn btn-light btn-lg mt-3">Explore Now</a>
+  </div>
+</header>
 
-<!-- Directory Table -->
-<div class="table-responsive">
-  <table class="table table-striped table-hover align-middle shadow-sm">
-    <thead class="table-primary">
-      <tr>
-        <th scope="col">Name / Designation</th>
-        <th scope="col">Department / Office</th>
-        <th scope="col">Telephone No.</th>
-      </tr>
-    </thead>
-    <tbody id="directoryTable">
-      <tr>
-        <td>
-          <strong>Rossano C. Valencia</strong><br>
-          <small class="text-muted">Municipal Mayor</small>
-        </td>
-        <td>Office of the Municipal Mayor</td>
-        <td>09123456789</td>
-      </tr>
-      <tr>
-        <td>
-          <strong>Benito S. Ochoa</strong><br>
-          <small class="text-muted">Acting Vice Mayor</small>
-        </td>
-        <td>Office of the Municipal Vice Mayor</td>
-        <td>09123456789</td>
-      </tr>
-      <tr>
-        <td>
-          <strong>Raychel B. Valencia</strong><br>
-          <small class="text-muted">Municipal Administrator</small>
-        </td>
-        <td>Municipal Administrator’s Office</td>
-        <td>09123456789</td>
-      </tr>
-      <!-- Keep adding rows here -->
-    </tbody>
-  </table>
-</div>
+<!-- Attractions Section -->
+<section id="attractions" class="py-5">
+  <div class="container">
+    <h2 class="fw-bold mb-4 text-center">Top Attractions</h2>
+    <div class="row g-4">
 
-<!-- Search Script -->
-<script>
-  document.getElementById("searchInput").addEventListener("keyup", function () {
-    let filter = this.value.toLowerCase();
-    let rows = document.querySelectorAll("#directoryTable tr");
+      <!-- Card 1 -->
+      <div class="col-md-4">
+        <div class="card card-3d shadow-sm h-100">
+          <img src="assets/img/bagasbas.jpg" class="card-img-top" alt="Bagasbas Beach">
+          <div class="card-body">
+            <h5 class="card-title">Bagasbas Beach</h5>
+            <p class="card-text text-muted">Famous for surfing, sunrise views, and golden sand.</p>
+          </div>
+        </div>
+      </div>
 
-    rows.forEach(row => {
-      let text = row.textContent.toLowerCase();
-      row.style.display = text.includes(filter) ? "" : "none";
-    });
-  });
-</script>
+      <!-- Card 2 -->
+      <div class="col-md-4">
+        <div class="card card-3d shadow-sm h-100">
+          <img src="assets/img/daet4.jpg" class="card-img-top" alt="First Rizal Monument">
+          <div class="card-body">
+            <h5 class="card-title">First Rizal Monument</h5>
+            <p class="card-text text-muted">Historical landmark honoring Dr. Jose Rizal, built in 1898.</p>
+          </div>
+        </div>
+      </div>
 
+      <!-- Card 3 -->
+      <div class="col-md-4">
+        <div class="card card-3d shadow-sm h-100">
+          <img src="assets/img/daet2.jpg" class="card-img-top" alt="Pinyasan Festival">
+          <div class="card-body">
+            <h5 class="card-title">Pinyasan Festival</h5>
+            <p class="card-text text-muted">Celebrate Daet’s sweetest pineapples every June with parades & culture.</p>
+          </div>
+        </div>
+      </div>
 
-      
     </div>
+  </div>
+</section>
+
+<!-- Another Parallax Section -->
+<section class="parallax parallax-2 d-flex align-items-center justify-content-center text-white text-center">
+  <div class="container">
+    <h2 class="fw-bold display-4">Bagasbas Beach</h2>
+    <p class="lead">Ride the waves and enjoy the golden coastline of Daet.</p>
+  </div>
+</section>
+
+<!-- 3D Globe Section -->
+<section id="globe" class="py-5 bg-light">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4">Explore Daet on the Globe</h2>
+    <p class="text-muted">See where Daet is located in the world.</p>
+    <div id="globeViz" style="width:100%; height:500px; border-radius: 10px; overflow: hidden;"></div>
+  </div>
+</section>
+
+
+<script src="https://unpkg.com/three/build/three.min.js"></script>
+<script src="https://unpkg.com/globe.gl"></script>
+
+
+
+
+
+<!-- 3D Interactive Map with Sidebar -->
+<section id="map-section" class="py-5">
+  <div class="container-fluid">
+    <h2 class="fw-bold text-center mb-4">Explore Daet in 3D</h2>
+    <p class="text-muted text-center mb-4">Find directions to Daet’s top attractions.</p>
+
+    <div class="list-group shadow-sm" id="hotspot-list">
+  <button class="list-group-item list-group-item-action fw-bold text-center bg-primary text-white" disabled>
+    Tourist Spots
+  </button>
+  <button id="myLocationBtn" class="list-group-item list-group-item-action text-center text-success fw-bold">
+    📍 Start from My Location
+  </button>
+  <!-- Hotspots will be inserted here via JS -->
+</div>
+
+
+      <!-- Map -->
+      <div class="col-md-9">
+        <div id="map" style="width:100%; height:500px; border-radius: 10px; overflow:hidden;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
+    <!-- end of code insert -->
+  </div>
   </div>
 </section>
 

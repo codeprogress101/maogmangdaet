@@ -195,3 +195,52 @@
   transform: translateY(-3px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
+
+
+/* trial for tourism */
+
+/* Parallax Backgrounds */
+/* Parallax Backgrounds */
+.parallax {
+  background: url("assets/img/daet_banner.jpg") center/cover no-repeat fixed;
+  min-height: 60vh;
+}
+.parallax-2 {
+  background: url("assets/img/bagasbas.jpg") center/cover no-repeat fixed;
+  min-height: 60vh;
+}
+
+/* 3D Card Hover */
+.card-3d {
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.card-3d:hover {
+  transform: rotateY(8deg) rotateX(4deg) scale(1.05);
+  box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+}
+
+/* Text shadow for readability on parallax */
+.parallax h1, .parallax h2, .parallax p {
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+
+#globeViz canvas {
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+
+#map {
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+
+.mapboxgl-popup {
+  max-width: 250px;
+  font-size: 0.9rem;
+}
+.mapboxgl-popup h6 {
+  margin: 0 0 5px;
+  font-weight: bold;
+}
