@@ -121,6 +121,7 @@
 }
 
 
+
 #backToTop {
   position: fixed;
   bottom: 20px;
@@ -177,4 +178,20 @@
 /* Optional: remove default Bootstrap focus outline on modal close button */
 #imageModal .btn-close {
   filter: invert(1);  /* make close button white on dark backdrop */
+}
+
+
+
+/* Charts size */
+#ageChart, #genderChart, #economyChart {
+  max-height: 350px;
+}
+
+/* Cards hover effect */
+.socio-economic-profile .card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.socio-economic-profile .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }

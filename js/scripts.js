@@ -270,3 +270,74 @@ document.addEventListener('DOMContentLoaded', () => {
     modalImage.alt = '';
   });
 });
+
+
+
+// for socio economic
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Age Distribution (Bar Chart)
+  const ageCtx = document.getElementById("ageChart").getContext("2d");
+  new Chart(ageCtx, {
+    type: "bar",
+    data: {
+      labels: ["0-14", "15-24", "25-54", "55-64", "65+"],
+      datasets: [{
+        label: "Population by Age Group",
+        data: [18000, 22000, 45000, 10000, 5000], // sample data
+        backgroundColor: "#0d6efd"
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+
+  // Gender Distribution (Pie Chart)
+  const genderCtx = document.getElementById("genderChart").getContext("2d");
+  new Chart(genderCtx, {
+    type: "pie",
+    data: {
+      labels: ["Male", "Female"],
+      datasets: [{
+        data: [52000, 59600], // sample data
+        backgroundColor: ["#0d6efd", "#dc3545"]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "bottom"
+        }
+      }
+    }
+  });
+
+  // Economy (Doughnut Chart)
+  const economyCtx = document.getElementById("economyChart").getContext("2d");
+  new Chart(economyCtx, {
+    type: "doughnut",
+    data: {
+      labels: ["Agriculture", "Commerce & Services", "Fisheries", "Others"],
+      datasets: [{
+        data: [40, 35, 15, 10], // sample percentages
+        backgroundColor: ["#198754", "#0d6efd", "#20c997", "#ffc107"]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "bottom"
+        }
+      }
+    }
+  });
+});
