@@ -1,9 +1,4 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <title>Government of Daet</title>
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
   <!-- Font Awesome icons -->
@@ -28,9 +23,19 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
+    .gov-card[data-official-card] {
+      cursor: pointer;
+    }
+
     .gov-card:hover {
       transform: translateY(-8px);
       box-shadow: 0 1.5rem 2.5rem rgba(0, 0, 0, 0.15);
+    }
+
+    .gov-card[data-official-card]:focus,
+    .gov-card[data-official-card]:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 0.25rem rgba(253, 126, 20, 0.35);
     }
 
     .gov-card .card-body {
@@ -58,11 +63,188 @@
       transform: translateX(-50%);
       width: 2px;
       height: 40px;
-      background: rgba(220, 53, 69, 0.4);
+      background: rgba(253, 126, 20, 0.4);
     }
 
     .org-connector:last-child::after {
       display: none;
+    }
+
+    .councilors-heading span {
+      display: block;
+    }
+
+    .councilors-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 576px) {
+      .councilors-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 768px) {
+      .councilors-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 992px) {
+      .councilors-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .councilor-card {
+      height: 100%;
+    }
+
+    .councilor-card .card-body {
+      height: 100%;
+    }
+
+    .gov-resources {
+      background: linear-gradient(180deg, #ffffff 0%, #fff5f6 100%);
+    }
+
+    .resource-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      padding: 1.75rem;
+      border-radius: 1.25rem;
+      background: #ffffff;
+      box-shadow: 0 1.5rem 3rem rgba(253, 126, 20, 0.08);
+    }
+
+    .resource-card .icon-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(253, 126, 20, 0.12);
+      color: #dc3545;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .resource-card .btn {
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 576px) {
+      .resource-card {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .resource-card .icon-circle {
+        margin-bottom: 0.75rem;
+      }
+    }
+
+    .gov-official-modal .modal-dialog {
+      max-width: 720px;
+    }
+
+    .gov-official-modal .modal-content {
+      position: relative;
+      border: 0;
+      border-radius: 1.5rem;
+      background: radial-gradient(circle at top left, rgba(253, 126, 20, 0.30), rgba(255, 255, 255, 0.98));
+      box-shadow: 0 1.75rem 3.5rem rgba(157, 33, 60, 0.25);
+      overflow: hidden;
+    }
+
+    .gov-official-modal .modal-content::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(253, 126, 20, 0.08), transparent 45%);
+      pointer-events: none;
+    }
+
+    .gov-official-modal .btn-close {
+      position: relative;
+      z-index: 2;
+      align-self: flex-end;
+      margin: 1rem 1rem 0 0;
+      background-color: rgba(253, 126, 20, 0.15);
+      border-radius: 50%;
+      padding: 0.65rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .gov-official-modal .btn-close:hover {
+      background-color: rgba(253, 126, 20, 0.3);
+    }
+
+    .gov-official-modal .btn-close:focus {
+      box-shadow: 0 0 0 0.25rem rgba(253, 126, 20, 0.35);
+    }
+
+    .gov-official-modal .modal-body {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: center;
+      padding: 2.5rem;
+    }
+
+    .gov-official-modal .official-photo {
+      width: 220px;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 1.25rem;
+      border: 6px solid #ffffff;
+      box-shadow: 0 1rem 2.5rem rgba(253, 126, 20, 0.5);
+    }
+
+    .gov-official-modal .official-details {
+      flex: 1 1 260px;
+    }
+
+    .gov-official-modal .official-name {
+      font-size: 1.75rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .gov-official-modal .official-role {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .gov-official-modal .official-description {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #4a4a4a;
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 576px) {
+      .gov-official-modal .modal-body {
+        padding: 2rem 1.5rem 2.5rem;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .gov-official-modal .official-photo {
+        width: 180px;
+        height: 180px;
+      }
+
+      .gov-official-modal .official-role {
+        margin-bottom: 0.75rem;
+      }
     }
   </style>
 </head>
@@ -136,12 +318,22 @@
     <!-- Mayor -->
     <div class="row justify-content-center org-connector mb-5">
       <div class="col-md-8 col-lg-6">
-        <div class="card gov-card text-center">
+        <div
+          class="card gov-card text-center"
+          data-official-card
+          data-full-name="Hon. Rossano C. Valencia"
+          data-role="Municipal Mayor"
+          data-photo="assets/img/gov/valencia.jpg"
+          data-description="Mayor Rossano C. Valencia steers Maogmang Daet toward inclusive growth by forging partnerships with barangays, civic groups, and national agencies for responsive services."
+          role="button"
+          tabindex="0"
+          aria-label="Read more about Hon. Rossano C. Valencia"
+        >
           <div class="card-body">
-            <img src="assets/img/gov/valencia.jpg" alt="Mayor of Daet" class="gov-photo mb-3 mx-auto">
+            <img src="assets/img/gov/valencia.jpg" alt="Portrait of Mayor Rossano C. Valencia" class="gov-photo mb-3 mx-auto">
             <h3 class="card-title mb-1">Hon. Rossano C. Valencia</h3>
-            <h6 class="text-danger fw-semibold mb-3">Municipal Mayor</h6>
-            <p class="card-text text-muted">Leads Maogmang Daet in building progressive programs, participatory governance, and people-centered services.</p>
+            <h6 class="text-danger fw-semibold text-uppercase mb-3">Municipal Mayor</h6>
+            <p class="card-text text-muted">Mayor Rossano C. Valencia steers Maogmang Daet toward inclusive growth by forging partnerships with barangays, civic groups, and national agencies for responsive services.</p>
           </div>
         </div>
       </div>
@@ -150,12 +342,22 @@
     <!-- Vice Mayor -->
     <div class="row justify-content-center org-connector mb-5">
       <div class="col-md-8 col-lg-6">
-        <div class="card gov-card text-center">
+        <div
+          class="card gov-card text-center"
+          data-official-card
+          data-full-name="Hon. Benito S. Ochoa"
+          data-role="Municipal Vice Mayor"
+          data-photo="assets/img/gov/ochoa.jpg"
+          data-description="Vice Mayor Benito S. Ochoa presides over the Sangguniang Bayan and advances people-centered ordinances that keep public consultations at the heart of legislation."
+          role="button"
+          tabindex="0"
+          aria-label="Read more about Hon. Benito S. Ochoa"
+        >
           <div class="card-body">
-            <img src="assets/img/gov/ochoa.jpg" alt="Vice Mayor of Daet" class="gov-photo mb-3 mx-auto">
+            <img src="assets/img/gov/ochoa.jpg" alt="Portrait of Vice Mayor Benito S. Ochoa" class="gov-photo mb-3 mx-auto">
             <h3 class="card-title mb-1">Hon. Benito S. Ochoa</h3>
-            <h6 class="text-danger fw-semibold mb-3">Municipal Vice Mayor</h6>
-            <p class="card-text text-muted">Presides over the Sangguniang Bayan and champions responsive legislation for every Daeteño household.</p>
+            <h6 class="text-danger fw-semibold text-uppercase mb-3">Municipal Vice Mayor</h6>
+            <p class="card-text text-muted">Vice Mayor Benito S. Ochoa presides over the Sangguniang Bayan and advances people-centered ordinances that keep public consultations at the heart of legislation.</p>
           </div>
         </div>
       </div>
@@ -163,108 +365,300 @@
 
     <!-- Councilors -->
     <div class="mb-4 text-center">
-      <h3 class="fw-bold">Sangguniang Bayan Members</h3>
+      <h3 class="fw-bold councilors-heading">
+        <span>Sangguniang Bayan</span>
+        <span>Members</span>
+      </h3>
       <p class="text-muted mb-0">Committed councilors crafting ordinances and resolutions for the welfare of the community.</p>
     </div>
 
-    <div class="row g-4">
-      <div class="col-sm-6 col-lg-4">
-        <div class="card gov-card h-100 text-center">
-          <div class="card-body">
-            <img src="assets/img/gov/carranceja.jpg" alt="Councilor Carranceja" class="gov-photo mb-3 mx-auto">
-            <h5 class="card-title mb-1">Hon. Iyah Carranceja</h5>
-            <p class="card-text text-muted">Focuses on livelihood, MSME development, and grassroots entrepreneurship.</p>
-          </div>
+    <div class="councilors-grid">
+      <article
+        class="card gov-card councilor-card text-center"
+        data-official-card
+        data-full-name="Hon. Iyah Carranceja"
+        data-role="Sangguniang Bayan Member"
+        data-photo="assets/img/gov/carranceja.jpg"
+        data-description="Councilor Iyah Carranceja champions livelihood and MSME development, mentoring cooperatives and start-ups to expand inclusive income opportunities."
+        role="button"
+        tabindex="0"
+        aria-label="Read more about Hon. Iyah Carranceja"
+      >
+        <div class="card-body">
+          <img src="assets/img/gov/carranceja.jpg" alt="Portrait of Councilor Iyah Carranceja" class="gov-photo mb-3 mx-auto">
+          <h5 class="card-title mb-1">Hon. Iyah Carranceja</h5>
+          <p class="text-danger fw-semibold text-uppercase small mb-2">Sangguniang Bayan Member</p>
+            <ul class="text-muted text-start small text-center list-group list-group-flush">
+            <li class="list-group-item">Education, Culture, & Arts Committee Chairman</li>
+            <li class="list-group-item">Labor & Employment Committee Chairman</li>
+            <li class="list-group-item">Social Services Committee Chairman</li>
+            </ul>
+          
         </div>
-      </div>
-      <div class="col-sm-6 col-lg-4">
-        <div class="card gov-card h-100 text-center">
-          <div class="card-body">
-            <img src="assets/img/gov/urbano.jpg" alt="Councilor Urbano" class="gov-photo mb-3 mx-auto">
-            <h5 class="card-title mb-1">Hon. John Chrysostom A. Urbano</h5>
-            <p class="card-text text-muted">Advocates health programs, women empowerment, and community resiliency.</p>
-          </div>
+      </article>
+      <article
+        class="card gov-card councilor-card text-center"
+        data-official-card
+        data-full-name="Hon. John Chrysostom A. Urbano"
+        data-role="Sangguniang Bayan Member"
+        data-photo="assets/img/gov/urbano.jpg"
+        data-description="Councilor John Chrysostom A. Urbano expands community health, women empowerment, and resiliency programs that equip families for emergencies."
+        role="button"
+        tabindex="0"
+        aria-label="Read more about Hon. John Chrysostom A. Urbano"
+      >
+        <div class="card-body">
+          <img src="assets/img/gov/urbano.jpg" alt="Portrait of Councilor John Chrysostom A. Urbano" class="gov-photo mb-3 mx-auto">
+          <h5 class="card-title mb-1">Hon. John Chrysostom A. Urbano</h5>
+          <p class="text-danger fw-semibold text-uppercase small mb-2">Sangguniang Bayan Member</p>
+          <ul class="text-muted text-start small text-center list-group list-group-flush">
+            <li class="list-group-item">Agriculture & Food Committee Chairman</li>
+            <li class="list-group-item">Games & Amusement Committee Chairman</li>
+            <li class="list-group-item">NGOs, POS & Cooperative Committee Chairman</li>
+            </ul>
         </div>
-      </div>
-      <div class="col-sm-6 col-lg-4">
-        <div class="card gov-card h-100 text-center">
-          <div class="card-body">
-            <img src="assets/img/gov/bandelaria.jpg" alt="Councilor Bandelaria" class="gov-photo mb-3 mx-auto">
-            <h5 class="card-title mb-1">Hon. Benjamin Marlon R. Bandelaria</h5>
-            <p class="card-text text-muted">Strengthens infrastructure projects and disaster preparedness initiatives.</p>
-          </div>
+      </article>
+      <article
+        class="card gov-card councilor-card text-center"
+        data-official-card
+        data-full-name="Hon. Benjamin Marlon R. Bandelaria"
+        data-role="Sangguniang Bayan Member"
+        data-photo="assets/img/gov/bandelaria.jpg"
+        data-description="Councilor Benjamin Marlon R. Bandelaria coordinates infrastructure upgrades and disaster preparedness initiatives that safeguard fast-growing barangays."
+        role="button"
+        tabindex="0"
+        aria-label="Read more about Hon. Benjamin Marlon R. Bandelaria"
+      >
+        <div class="card-body">
+          <img src="assets/img/gov/bandelaria.jpg" alt="Portrait of Councilor Benjamin Marlon R. Bandelaria" class="gov-photo mb-3 mx-auto">
+          <h5 class="card-title mb-1">Hon. Benjamin Marlon R. Bandelaria</h5>
+          <p class="text-danger fw-semibold text-uppercase small mb-2">Sangguniang Bayan Member</p>
+            <ul class="text-muted text-start small text-center list-group list-group-flush">
+            <li class="list-group-item">Trade & Industry Committee Chairman</li>
+            <li class="list-group-item">Tourism Committee Chairman</li>
+            <li class="list-group-item">Urban Poor & Rural Settlement Committee Chairman</li>
+            </ul>
         </div>
-      </div>
-      <div class="col-sm-6 col-lg-4">
-        <div class="card gov-card h-100 text-center">
-          <div class="card-body">
-            <img src="assets/img/gov/coreses.jpg" alt="Councilor Coreses" class="gov-photo mb-3 mx-auto">
-            <h5 class="card-title mb-1">Hon. Arch. Jose Angelo A. Coreses</h5>
-            <p class="card-text text-muted">Supports inclusive education, youth leadership, and digital literacy initiatives.</p>
-          </div>
+      </article>
+      <article
+        class="card gov-card councilor-card text-center"
+        data-official-card
+        data-full-name="Hon. Arch. Jose Angelo A. Coreses"
+        data-role="Sangguniang Bayan Member"
+        data-photo="assets/img/gov/coreses.jpg"
+        data-description="Councilor Arch. Jose Angelo A. Coreses integrates inclusive education, youth leadership, and digital literacy projects across schools and barangay hubs."
+        role="button"
+        tabindex="0"
+        aria-label="Read more about Hon. Arch. Jose Angelo A. Coreses"
+      >
+        <div class="card-body">
+          <img src="assets/img/gov/coreses.jpg" alt="Portrait of Councilor Arch. Jose Angelo A. Coreses" class="gov-photo mb-3 mx-auto">
+          <h5 class="card-title mb-1">Hon. Arch. Jose Angelo A. Coreses</h5>
+          <p class="text-danger fw-semibold text-uppercase small mb-2">Sangguniang Bayan Member</p>
+          <ul class="text-muted text-start small text-center list-group list-group-flush">
+            <li class="list-group-item">Finance & Appropriation Committee Chairman</li>
+            <li class="list-group-item">Public Works, Infrastructure, Town Planning and Zoning Committee Chairman</li>
+            <li class="list-group-item">Public Utilities, Transportation & Communication Committee Chairman</li>
+            </ul>
         </div>
-      </div>
-      <div class="col-sm-6 col-lg-4">
-        <div class="card gov-card h-100 text-center">
-          <div class="card-body">
-            <img src="assets/img/gov/tejada.jpg" alt="Councilor Tejada" class="gov-photo mb-3 mx-auto">
-            <h5 class="card-title mb-1">Hon. Ian Mhar T. Tejada</h5>
-            <p class="card-text text-muted">Champions agricultural innovation and sustainable environmental practices.</p>
-          </div>
+      </article>
+      <article
+        class="card gov-card councilor-card text-center"
+        data-official-card
+        data-full-name="Hon. Ian Mhar T. Tejada"
+        data-role="Sangguniang Bayan Member"
+        data-photo="assets/img/gov/tejada.jpg"
+        data-description="Councilor Ian Mhar T. Tejada promotes agricultural innovation and sustainable environmental practices to strengthen local food systems."
+        role="button"
+        tabindex="0"
+        aria-label="Read more about Hon. Ian Mhar T. Tejada"
+      >
+        <div class="card-body">
+          <img src="assets/img/gov/tejada.jpg" alt="Portrait of Councilor Ian Mhar T. Tejada" class="gov-photo mb-3 mx-auto">
+          <h5 class="card-title mb-1">Hon. Ian Mhar T. Tejada</h5>
+          <p class="text-danger fw-semibold text-uppercase small mb-2">Sangguniang Bayan Member</p>
+          <ul class="text-muted text-start small text-center list-group list-group-flush">
+            <li class="list-group-item">Good Governance, Public Ethics & Accountability Committee Chairman</li>
+            <li class="list-group-item">Health & Sanitation Committee Chairman</li>
+            <li class="list-group-item">Permits & Licenses Committee Chairman</li>
+            
+            </ul>
         </div>
-      </div>
-      <div class="col-sm-6 col-lg-4">
-        <div class="card gov-card h-100 text-center">
-          <div class="card-body">
-            <img src="assets/img/gov/king.jpg" alt="Councilor King" class="gov-photo mb-3 mx-auto">
-            <h5 class="card-title mb-1">HON. ROSA MIA L. KING</h5>
-            <p class="card-text text-muted">Drives cultural preservation, creative industries, and tourism-linked enterprises.</p>
-          </div>
+      </article>
+      <article
+        class="card gov-card councilor-card text-center"
+        data-official-card
+        data-full-name="Hon. Rosa Mia L. King"
+        data-role="Sangguniang Bayan Member"
+        data-photo="assets/img/gov/king.jpg"
+        data-description="Councilor Rosa Mia L. King curates cultural preservation efforts and creative industry support that link heritage with tourism growth."
+        role="button"
+        tabindex="0"
+        aria-label="Read more about Hon. Rosa Mia L. King"
+      >
+        <div class="card-body">
+          <img src="assets/img/gov/king.jpg" alt="Portrait of Councilor Rosa Mia L. King" class="gov-photo mb-3 mx-auto">
+          <h5 class="card-title mb-1">Hon. Rosa Mia L. King</h5>
+          <p class="text-danger fw-semibold text-uppercase small mb-2">Sangguniang Bayan Member</p>
+          <ul class="text-muted text-start small text-center list-group list-group-flush">
+            <li class="list-group-item">Disaster Preparedness Committee Chairman</li>
+            <li class="list-group-item">Ways & Means Committee Chairman</li>
+            <li class="list-group-item">Women, Children, & Family Committee Chairman</li>
+            </ul>
         </div>
-      </div>
+      </article>
+      <article
+        class="card gov-card councilor-card text-center"
+        data-official-card
+        data-full-name="Hon. William Carlo R. Avila"
+        data-role="Sangguniang Bayan Member"
+        data-photo="assets/img/gov/avila.jpg"
+        data-description="Councilor William Carlo R. Avila advances public safety, transport management, and smart-city solutions for a more connected Daet."
+        role="button"
+        tabindex="0"
+        aria-label="Read more about Hon. William Carlo R. Avila"
+      >
+        <div class="card-body">
+          <img src="assets/img/gov/avila.jpg" alt="Portrait of Councilor William Carlo R. Avila" class="gov-photo mb-3 mx-auto">
+          <h5 class="card-title mb-1">Hon. William Carlo R. Avila</h5>
+          <p class="text-danger fw-semibold text-uppercase small mb-2">Sangguniang Bayan Member</p>
+          <ul class="text-muted text-start small text-center list-group list-group-flush">
+            <li class="list-group-item">Peace & Order, Public Safety, & Fire Safety Committee Chairman</li>
+            <li class="list-group-item">Personnel Committee Chairman</li>
+            <li class="list-group-item">Senior Citizens & PWDs Committee Chairman</li>
+            <li class="list-group-item">Rules, Laws & Privileges Committee Chairman</li>
+            </ul>
+        </div>
+      </article>
+      <article
+        class="card gov-card councilor-card text-center"
+        data-official-card
+        data-full-name="Hon. Jeffrey A. Timoner"
+        data-role="Sangguniang Bayan Member"
+        data-photo="assets/img/gov/timoner.jpg"
+        data-description="Councilor Jeffrey A. Timoner mobilizes youth sports, barangay engagement, and civic innovation initiatives that nurture future leaders."
+        role="button"
+        tabindex="0"
+        aria-label="Read more about Hon. Jeffrey A. Timoner"
+      >
+        <div class="card-body">
+          <img src="assets/img/gov/timoner.jpg" alt="Portrait of Councilor Jeffrey A. Timoner" class="gov-photo mb-3 mx-auto">
+          <h5 class="card-title mb-1">Hon. Jeffrey A. Timoner</h5>
+          <p class="text-danger fw-semibold text-uppercase small mb-2">Sangguniang Bayan Member</p>
+          <ul class="text-muted text-start small text-center list-group list-group-flush">
+            <li class="list-group-item">Environmental Protection & Ecology Committee Chairman</li>
+            <li class="list-group-item">Market & Slaughterhouse Committee Chairman</li>
+            </ul>
+        </div>
+      </article>
+      <article
+        class="card gov-card councilor-card text-center"
+        data-official-card
+        data-full-name="Hon. Reiner S. Morena"
+        data-role="Sangguniang Bayan Member"
+        data-photo="assets/img/gov/morena.jpg"
+        data-description="Councilor Reiner S. Morena leads cooperative development and social welfare programs that prioritize vulnerable households."
+        role="button"
+        tabindex="0"
+        aria-label="Read more about Hon. Reiner S. Morena"
+      >
+        <div class="card-body">
+          <img src="assets/img/gov/morena.jpg" alt="Portrait of Councilor Reiner S. Morena" class="gov-photo mb-3 mx-auto">
+          <h5 class="card-title mb-1">Hon. Reiner S. Morena</h5>
+          <p class="text-danger fw-semibold text-uppercase small mb-2">Ex Officio - LNB</p>
+          <ul class="text-muted text-start small text-center list-group list-group-flush">
+            <li class="list-group-item">Barangay Affairs Committee Chairman</li>
+            <li class="list-group-item">Quasi-Judicial Committee Chairman</li>
+          
+            </ul>
+        </div>
+      </article>
+      <article
+        class="card gov-card councilor-card text-center"
+        data-official-card
+        data-full-name="Hon. Janea P. Moreno"
+        data-role="Sangguniang Bayan Member"
+        data-photo="assets/img/gov/moreno.jpg"
+        data-description="Councilor Janea P. Moreno empowers women and child-focused advocacy networks, ensuring inclusive municipal services."
+        role="button"
+        tabindex="0"
+        aria-label="Read more about Hon. Janea P. Moreno"
+      >
+        <div class="card-body">
+          <img src="assets/img/gov/moreno.jpg" alt="Portrait of Councilor Janea P. Moreno" class="gov-photo mb-3 mx-auto">
+          <h5 class="card-title mb-1">Hon. Janea P. Moreno</h5>
+          <p class="text-danger fw-semibold text-uppercase small mb-2">EX Officio - SKMF</p>
+          <ul class="text-muted text-start small text-center list-group list-group-flush">
+            <li class="list-group-item">Human Rights Committee Chairman</li>
+            <li class="list-group-item">Youth & Sports Committee Chairman</li>
+            </ul>
+        </div>
+      </article>
+    </div>
 
-       <div class="col-sm-6 col-lg-4">
-        <div class="card gov-card h-100 text-center">
-          <div class="card-body">
-            <img src="assets/img/gov/avila.jpg" alt="Councilor Avila" class="gov-photo mb-3 mx-auto">
-            <h5 class="card-title mb-1">Hon. William Carlo R. Avila</h5>
-            <p class="card-text text-muted">Drives cultural preservation, creative industries, and tourism-linked enterprises.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-6 col-lg-4">
-        <div class="card gov-card h-100 text-center">
-          <div class="card-body">
-            <img src="assets/img/gov/timoner.jpg" alt="Councilor Timoner" class="gov-photo mb-3 mx-auto">
-            <h5 class="card-title mb-1">Hon. Jeffrey A. Timoner</h5>
-            <p class="card-text text-muted">Drives cultural preservation, creative industries, and tourism-linked enterprises.</p>
-          </div>
-        </div>
-      </div>
+  </div>
+</section>
 
-      <div class="col-sm-6 col-lg-4">
-        <div class="card gov-card h-100 text-center">
-          <div class="card-body">
-            <img src="assets/img/gov/morena.jpg" alt="Councilor Morena" class="gov-photo mb-3 mx-auto">
-            <h5 class="card-title mb-1">Hon. Reiner S. Morena</h5>
-            <p class="card-text text-muted">Drives cultural preservation, creative industries, and tourism-linked enterprises.</p>
+<section class="gov-resources py-5">
+  <div class="container px-4 px-lg-5">
+    <div class="row align-items-center gy-4">
+      <div class="col-lg-5">
+        <h2 class="fw-bold mb-3">Downloadable Resources</h2>
+        <p class="text-muted mb-0">Access key documents that promote transparency and informed community participation.</p>
+      </div>
+      <div class="col-lg-7">
+        <div class="resource-card mb-4">
+          <div class="icon-circle">
+            <i class="bi bi-file-earmark-text"></i>
+          </div>
+          <div>
+            <h5 class="mb-1">Ordinances &amp; Resolutions</h5>
+            <p class="text-muted small mb-3">Download the latest legislative measures enacted by the Sangguniang Bayan.</p>
+            <div class="d-flex flex-wrap gap-2">
+              <a href="assets/docs/ordinance-2024-001.pdf" class="btn btn-outline-danger btn-sm" download>
+                <i class="bi bi-arrow-down-circle me-1"></i>
+                Ordinance No. 2024-001
+              </a>
+              <a href="assets/docs/resolution-2024-015.pdf" class="btn btn-outline-danger btn-sm" download>
+                <i class="bi bi-arrow-down-circle me-1"></i>
+                Resolution No. 2024-015
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="resource-card">
+          <div class="icon-circle">
+            <i class="bi bi-graph-up"></i>
+          </div>
+          <div>
+            <h5 class="mb-1">Annual Reports</h5>
+            <p class="text-muted small mb-3">Review the municipality&#39;s accomplishments, fiscal performance, and development priorities.</p>
+            <a href="assets/docs/annual-report-2023.pdf" class="btn btn-outline-danger btn-sm" download>
+              <i class="bi bi-arrow-down-circle me-1"></i>
+              FY 2023 Annual Report
+            </a>
           </div>
         </div>
       </div>
-
-      <div class="col-sm-6 col-lg-4">
-        <div class="card gov-card h-100 text-center">
-          <div class="card-body">
-            <img src="assets/img/gov/moreno.jpg" alt="Councilor Moreno" class="gov-photo mb-3 mx-auto">
-            <h5 class="card-title mb-1">Hon. Janea P. Moreno</h5>
-            <p class="card-text text-muted">Drives cultural preservation, creative industries, and tourism-linked enterprises.</p>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 </section>
+
+<div class="modal fade gov-official-modal" id="officialModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-body">
+        <img src="" alt="" class="official-photo" data-official-photo>
+        <div class="official-details">
+          <h3 class="official-name" data-official-name></h3>
+          <p class="official-role text-danger fw-semibold" data-official-role></p>
+          <p class="official-description" data-official-description></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
          <!-- Footer Section -->
 <footer class="site-footer">
@@ -383,5 +777,54 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
  <!-- Core theme JS -->
   <script src="js/scripts.js"></script>
+  <script>
+    (function () {
+      const modalEl = document.getElementById('officialModal');
+      if (!modalEl) {
+        return;
+      }
+
+      const nameEl = modalEl.querySelector('[data-official-name]');
+      const roleEl = modalEl.querySelector('[data-official-role]');
+      const descriptionEl = modalEl.querySelector('[data-official-description]');
+      const photoEl = modalEl.querySelector('[data-official-photo]');
+      const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+      function showOfficial(card) {
+        const { fullName, role, description, photo } = card.dataset;
+        if (nameEl) {
+          nameEl.textContent = fullName || '';
+        }
+        if (roleEl) {
+          roleEl.textContent = role || '';
+        }
+        if (descriptionEl) {
+          descriptionEl.textContent = description || '';
+        }
+        if (photoEl) {
+          photoEl.src = photo || '';
+          photoEl.alt = fullName ? `${fullName} portrait` : '';
+        }
+        modalInstance.show();
+      }
+
+      modalEl.addEventListener('hidden.bs.modal', () => {
+        if (photoEl) {
+          photoEl.src = '';
+          photoEl.alt = '';
+        }
+      });
+
+      document.querySelectorAll('[data-official-card]').forEach((card) => {
+        card.addEventListener('click', () => showOfficial(card));
+        card.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            showOfficial(card);
+          }
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
