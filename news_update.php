@@ -137,25 +137,10 @@ if (!function_exists('buildNewsQuery')) {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <title>News &amp; Updates</title>
-  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-  <!-- Font Awesome icons -->
-  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-  <!-- Google fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,700" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Core theme CSS -->
-  <link href="css/styles.css" rel="stylesheet" />
-  <link href="css/responsive.css" rel="stylesheet" />
-
-  <style>
+<?php
+$page_title = 'News &amp; Updates';
+$page_head_includes = <<<HTML
+    <style>
     :root {
       --news-primary: #fd7e14;
     }
@@ -269,62 +254,14 @@ if (!function_exists('buildNewsQuery')) {
       background-color: #e56f0e;
       border-color: #e56f0e;
     }
-  </style>
-</head>
-<body id="page-top">
+    </style>
 
-            <!-- ================= NAVBAR ================= -->
-            <nav class="navbar navbar-expand-lg navbar-dark bg-white fixed-top shadow-sm" id="mainNav">
-              <div class="container px-4 px-lg-5">
-                <!-- Logo + Brand -->
-                <a class="navbar-brand d-flex align-items-center" href="index.html">
-                  <img
-                    src="assets/img/lgu logo.png"
-                    alt="LGU Logo"
-                    class="me-2"/>
-                  Maogmang Daet
-                </a>
+HTML;
+$activePage = 'news';
+include 'header.php';
+?>
 
-                <!-- Mobile Toggle -->
-                <button
-                  class="navbar-toggler"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#navbarResponsive"
-                  aria-controls="navbarResponsive"
-                  aria-expanded="false"
-                  aria-label="Toggle navigation"
-                >
-                  <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- Nav Links -->
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                  <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                      <a class="nav-link" href="about.html">About</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="government.html">Government</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link active" aria-current="page" href="news_update.php">News &amp; Updates</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#transparency">Transparency</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="tourism.html">Tourism</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="services.html">Services</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </nav>
-
-            <!-- HERO SECTION -->
+ <!-- HERO SECTION -->
             <header class="about-header text-white text-center d-flex align-items-center justify-content-center news-hero">
             <div class="container px-4 px-lg-5">
                 <h1 class="fw-bold display-4">News &amp; Updates</h1>
@@ -339,7 +276,7 @@ if (!function_exists('buildNewsQuery')) {
         <p class="text-muted mb-0">Stay informed with the most recent announcements, community stories, and development projects around Daet.</p>
       </div>
       <div class="col-lg-5 mt-3 mt-lg-0">
-        <form class="news-search" method="get" action="news_updates.php">
+         <form class="news-search" method="get" action="news_update.php">
           <div class="input-group">
             <input type="text" name="q" class="form-control" placeholder="Search news, events, or categories" value="<?php echo htmlspecialchars($searchQuery, ENT_QUOTES, 'UTF-8'); ?>" aria-label="Search news" />
             <button class="btn btn-news" type="submit">
@@ -365,6 +302,7 @@ if (!function_exists('buildNewsQuery')) {
       </div>
     </div>
 
+    
     <?php if (empty($paginatedArticles)): ?>
       <div class="text-center py-5">
         <i class="bi bi-newspaper text-muted display-5 mb-3"></i>
@@ -432,127 +370,4 @@ if (!function_exists('buildNewsQuery')) {
     <?php endif; ?>
   </div>
 </section>
-
-<!-- Footer Section -->
-<footer class="site-footer">
-  <div class="footer-container">
-
-    <!-- Column 1 -->
-    <div class="footer-col">
-      <img src="assets/img/lgu logo.png" alt="City Logo" class="footer-logo">
-      <img src="assets/img/md logo.png" alt="City Logo" class="footer-logo">
-      <p><strong>OFFICIAL WEBSITE OF THE<br>MUNICIPALITY OF DAET</strong></p>
-      <p>
-        About this website <br>
-        Contact us at <a href="mailto:info@naga.gov.ph">info@lgudaet.gov.ph</a><br>
-        iGovernance Team | Local Government Unit of Daet
-      </p>
-      <div class="social-icons">
-        <a href="#"><i class="fab fa-facebook-f"></i></a>
-        <a href="#"><i class="fab fa-x-twitter"></i></a>
-        <a href="#"><i class="fab fa-youtube"></i></a>
-        <a href="#"><i class="fab fa-tiktok"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-      </div>
-    </div>
-
-    <!-- Column 2 -->
-    <div class="footer-col">
-      <h4>Municipal Government Links</h4>
-      <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Resident</a></li>
-        <li><a href="#">Visitor</a></li>
-        <li><a href="#">Investor</a></li>
-        <li><a href="#">Supplier</a></li>
-        <li><a href="#">Student</a></li>
-        <li><a href="#">Municipal Officials</a></li>
-      </ul>
-    </div>
-
-    <!-- Column 3 -->
-    <div class="footer-col">
-      <h4>Government Links</h4>
-      <ul>
-        <li><a href="#">Office of the President</a></li>
-        <li><a href="#">Office of the Vice President</a></li>
-        <li><a href="#">Senate of the Philippines</a></li>
-        <li><a href="#">House of Representatives</a></li>
-        <li><a href="#">Supreme Court</a></li>
-        <li><a href="#">Court of Appeals</a></li>
-        <li><a href="#">Sandiganbayan</a></li>
-      </ul>
-    </div>
-
-    <!-- Column 4 -->
-    <div class="footer-col">
-      <h4>About GOVPH</h4>
-      <p>
-        Learn more about the Philippine government, its structure,
-        how government works and the people behind it.
-      </p>
-      <ul>
-        <li><a href="#">Open Data Portal</a></li>
-        <li><a href="#">Official Gazette</a></li>
-      </ul>
-    </div>
-
-    <!-- Column 5 -->
-    <div class="footer-col footer-logos">
-      <!-- First Logo + Links -->
-      <div class="footer-logo-box">
-        <img src="assets/img/dpstatement1.png" alt="DPO/DPS Logo" class="footer-badge">
-        <p>
-          <a href="#">Data Privacy Policy</a><br>
-          <a href="#">Terms and Conditions</a>
-        </p>
-      </div>
-
-      <!-- Second Logo + Text -->
-      <div class="footer-logo-box">
-        <img src="assets/img/coa-footerv2.svg" alt="E-Governance Logo" class="footer-badge">
-        <p><strong>Republic of the Philippines</strong></p>
-      </div>
-    </div>
-    </div>
-
-
-  </div>
-
-  <div class="footer-bottom">
-    <p>REPUBLIC OF THE PHILIPPINES — All content is in the public domain unless otherwise stated.</p>
-    <p><a href="#">Data Privacy Policy</a> | <a href="#">Terms and Conditions</a></p>
-  </div>
-</footer>
-
-<button id="backToTop" class="btn btn-primary rounded-circle shadow">
-            <i class="bi bi-arrow-up"></i> <!-- using Bootstrap Icon -->
-            </button>
-
-             <script>
-    const backToTopBtn = document.getElementById("backToTop");
-
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 300) {
-        backToTopBtn.classList.add("show");
-      } else {
-        backToTopBtn.classList.remove("show");
-      }
-    });
-
-    backToTopBtn.addEventListener("click", () => {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    });
-  </script>
-
-
-
-  <!-- Bootstrap core JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Core theme JS -->
-  <script src="js/scripts.js"></script>
-</body>
-</html>
+<?php include 'footer.php'; ?>

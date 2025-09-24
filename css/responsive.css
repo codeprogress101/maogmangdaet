@@ -291,3 +291,34 @@
 .about-header{
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.10));
 }
+
+
+/* ===== 3D Splash Loader ===== */
+#splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000;
+  z-index: 2000;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+#splash-screen.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+#bantayogCanvas {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+
+
