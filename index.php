@@ -128,370 +128,187 @@ $announcements = [
     </section>
 
 
-    <!-- WHAT'S NEW SECTION -->
-    <section
-      class="updates-section bg-light py-5 d-flex align-items-center"
-      id="updates"
-      style="min-height: 100vh"
+<!-- WHAT'S NEW SECTION -->
+<section
+  class="updates-section bg-light py-4"
+  id="updates"
+  style="min-height: 100vh"
+>
+  <div class="container px-4 px-lg-5">
+    <!-- Section Title -->
+    <h2
+      class="text-center mb-4 animate-on-scroll"
+      data-animate="animate__fadeInDown"
     >
-      <div class="container px-4 px-lg-5">
-        <!-- Section Title -->
-        <h2
-          class="text-center mb-5 animate-on-scroll"
-          data-animate="animate__fadeInDown"
-        >
-          What's New in Daet?
-        </h2>
+      What's New in Daet?
+    </h2>
 
-         <?php if ($dbErrorMessage): ?>
-          <div class="alert alert-warning small text-center mb-4" role="alert">
-            <?php echo htmlspecialchars($dbErrorMessage); ?>
-          </div>
-        <?php endif; ?>
+   
 
-        <div class="row">
-          <!-- Left column: Updates -->
-          <div class="col-lg-8">
-            <!-- Executive Issuances -->
-            <div
-              class="mb-4 animate-on-scroll"
-              data-animate="animate__fadeInLeft"
-            >
-               <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                  <h5 class="mb-1">Executive Issuances</h5>
-                  <p class="text-muted small mb-0">
-                    Latest executive orders released by the municipal government.
-                  </p>
-                </div>
-              </div>
-              <div class="list-group shadow-sm">
-                <?php if (!empty($executiveIssuances)): ?>
-                  <?php foreach ($executiveIssuances as $document): ?>
-                    <?php
-                      $description = isset($document['description']) && trim((string) $document['description']) !== ''
-                        ? $document['description']
-                        : 'No description provided.';
-                      $filePath = isset($document['file_path']) ? (string) $document['file_path'] : '';
-                    ?>
-                    <div class="list-group-item d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3">
-                      <div>
-                        <div class="fw-semibold mb-1">
-                          <?php echo htmlspecialchars((string) ($document['title'] ?? 'Untitled Document')); ?>
-                        </div>
-                        <p class="text-muted small mb-0">
-                          <?php echo htmlspecialchars($description); ?>
-                        </p>
-                      </div>
-                      <div class="ms-sm-auto">
-                        <?php if ($filePath !== ''): ?>
-                          <a
-                            href="<?php echo htmlspecialchars($filePath); ?>"
-                            class="btn btn-primary btn-sm"
-                            target="_blank"
-                            rel="noopener"
-                          >
-                            Preview
-                          </a>
-                        <?php else: ?>
-                          <span class="badge bg-secondary align-self-center">No file</span>
-                        <?php endif; ?>
-                      </div>
-                    </div>
-                  <?php endforeach; ?>
-                <?php else: ?>
-                  <div class="list-group-item text-muted">No records available.</div>
-                <?php endif; ?>
-              </div>
-            </div>
-
-            <!-- Hearings -->
-            <div
-               class="mb-4 animate-on-scroll"
-              data-animate="animate__fadeInRight"
-            >
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                  <h5 class="mb-1">Public Hearings</h5>
-                  <p class="text-muted small mb-0">
-                    Scheduled hearings and consultation documents for the community.
-                  </p>
-                </div>
-              </div>
-              <div class="list-group shadow-sm">
-                <?php if (!empty($publicHearings)): ?>
-                  <?php foreach ($publicHearings as $hearing): ?>
-                    <?php
-                      $description = isset($hearing['description']) && trim((string) $hearing['description']) !== ''
-                        ? $hearing['description']
-                        : 'No description provided.';
-                      $filePath = isset($hearing['file_path']) ? (string) $hearing['file_path'] : '';
-                    ?>
-                    <div class="list-group-item d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3">
-                      <div>
-                        <div class="fw-semibold mb-1">
-                          <?php echo htmlspecialchars((string) ($hearing['title'] ?? 'Untitled Document')); ?>
-                        </div>
-                        <p class="text-muted small mb-0">
-                          <?php echo htmlspecialchars($description); ?>
-                        </p>
-                      </div>
-                      <div class="ms-sm-auto">
-                        <?php if ($filePath !== ''): ?>
-                          <a
-                            href="<?php echo htmlspecialchars($filePath); ?>"
-                            class="btn btn-outline-primary btn-sm"
-                            target="_blank"
-                            rel="noopener"
-                          >
-                            Preview
-                          </a>
-                        <?php else: ?>
-                          <span class="badge bg-secondary align-self-center">No file</span>
-                        <?php endif; ?>
-                      </div>
-                    </div>
-                  <?php endforeach; ?>
-                <?php else: ?>
-                  <div class="list-group-item text-muted">No records available.</div>
-                <?php endif; ?>
-              </div>
-            </div>
-
-
-            <!-- Recent Ordinances -->
-            <div
-               class="mb-4 animate-on-scroll"
-              data-animate="animate__fadeInLeft"
-            >
-          <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                  <h5 class="mb-1">Recent Ordinances</h5>
-                  <p class="text-muted small mb-0">
-                    Newly approved ordinances affecting the municipality.
-                  </p>
-                </div>
-              </div>
-              <div class="list-group shadow-sm">
-                <?php if (!empty($recentOrdinances)): ?>
-                  <?php foreach ($recentOrdinances as $ordinance): ?>
-                    <?php
-                      $description = isset($ordinance['description']) && trim((string) $ordinance['description']) !== ''
-                        ? $ordinance['description']
-                        : 'No description provided.';
-                      $filePath = isset($ordinance['file_path']) ? (string) $ordinance['file_path'] : '';
-                    ?>
-                    <div class="list-group-item d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3">
-                      <div>
-                        <div class="fw-semibold mb-1">
-                          <?php echo htmlspecialchars((string) ($ordinance['title'] ?? 'Untitled Document')); ?>
-                        </div>
-                        <p class="text-muted small mb-0">
-                          <?php echo htmlspecialchars($description); ?>
-                        </p>
-                      </div>
-                      <div class="ms-sm-auto">
-                        <?php if ($filePath !== ''): ?>
-                          <a
-                            href="<?php echo htmlspecialchars($filePath); ?>"
-                            class="btn btn-primary btn-sm"
-                            target="_blank"
-                            rel="noopener"
-                          >
-                            Preview
-                          </a>
-                        <?php else: ?>
-                          <span class="badge bg-secondary align-self-center">No file</span>
-                        <?php endif; ?>
-                      </div>
-                    </div>
-                  <?php endforeach; ?>
-                <?php else: ?>
-                  <div class="list-group-item text-muted">No records available.</div>
-                <?php endif; ?>
-              </div>
-            </div>
-
-
-            <!-- Resolutions -->
-            <div
-              class="mb-4 animate-on-scroll"
-              data-animate="animate__fadeInRight"
-            >
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                  <h5 class="mb-1">Resolutions</h5>
-                  <p class="text-muted small mb-0">
-                    Selected council resolutions and supporting documents.
-                  </p>
-                </div>
-              </div>
-              <div class="list-group shadow-sm">
-                <?php if (!empty($resolutions)): ?>
-                  <?php foreach ($resolutions as $resolution): ?>
-                    <?php
-                      $description = isset($resolution['description']) && trim((string) $resolution['description']) !== ''
-                        ? $resolution['description']
-                        : 'No description provided.';
-                      $filePath = isset($resolution['file_path']) ? (string) $resolution['file_path'] : '';
-                    ?>
-                    <div class="list-group-item d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3">
-                      <div>
-                        <div class="fw-semibold mb-1">
-                          <?php echo htmlspecialchars((string) ($resolution['title'] ?? 'Untitled Document')); ?>
-                        </div>
-                        <p class="text-muted small mb-0">
-                          <?php echo htmlspecialchars($description); ?>
-                        </p>
-                      </div>
-                      <div class="ms-sm-auto">
-                        <?php if ($filePath !== ''): ?>
-                          <a
-                            href="<?php echo htmlspecialchars($filePath); ?>"
-                            class="btn btn-outline-primary btn-sm"
-                            target="_blank"
-                            rel="noopener"
-                          >
-                            Preview
-                          </a>
-                        <?php else: ?>
-                          <span class="badge bg-secondary align-self-center">No file</span>
-                        <?php endif; ?>
-                      </div>
-                    </div>
-                  <?php endforeach; ?>
-                <?php else: ?>
-                  <div class="list-group-item text-muted">No records available.</div>
-                <?php endif; ?>
-              </div>
-            </div>
-
-
-
-          
-
-            <!-- Announcements / Advisories -->
-            <div
-              class="mb-4 animate-on-scroll"
-              data-animate="animate__fadeInUp"
-            >
-           <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                  <h5 class="mb-1">Announcements & Advisories</h5>
-                  <p class="text-muted small mb-0">
-                    Stay tuned for updates from the Municipal Information Office.
-                  </p>
-                </div>
-              </div>
-              <div class="list-group shadow-sm">
-                <?php foreach ($announcements as $announcement): ?>
-                  <div class="list-group-item border-start border-4 border-warning">
-                    <div class="fw-semibold text-warning mb-1">
-                      <?php echo htmlspecialchars($announcement['title']); ?>
+    <div class="row">
+      <!-- Left column -->
+      <div class="col-lg-8">
+        <!-- Executive Issuances -->
+        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInLeft">
+          <h6 class="fw-bold mb-1">Executive Issuances</h6>
+          <div class="list-group shadow-sm small">
+            <?php if (!empty($executiveIssuances)): ?>
+              <?php foreach ($executiveIssuances as $document): ?>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="fw-semibold">
+                      <?php echo htmlspecialchars($document['title'] ?? 'Untitled'); ?>
                     </div>
                     <p class="text-muted small mb-0">
-                      <?php echo htmlspecialchars($announcement['description']); ?>
+                      <?php echo htmlspecialchars($document['description'] ?? 'No description.'); ?>
                     </p>
                   </div>
-                <?php endforeach; ?>
-              </div>
-            </div>
+                  <div>
+                    <?php if (!empty($document['file_path'])): ?>
+                      <a href="<?php echo htmlspecialchars($document['file_path']); ?>" class="btn btn-primary btn-sm" target="_blank">Preview</a>
+                    <?php endif; ?>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <div class="list-group-item text-muted">No records.</div>
+            <?php endif; ?>
           </div>
-          <!-- Right column: Weather + Map + Social Media -->
-          <div class="col-lg-4">
-            <!-- Weather Card -->
-            <div
-              class="card text-center mb-3 animate-on-scroll"
-              data-animate="animate__fadeInUp"
-            >
-              <div class="card-body bg-primary text-white">
-                <h5 class="card-title mb-2">Daet Weather</h5>
-                <div id="weather-today">
-                  <p class="mb-2">Loading...</p>
+        </div>
+
+        <!-- Public Hearings -->
+        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInRight">
+          <h6 class="fw-bold mb-1">Public Hearings</h6>
+          <div class="list-group shadow-sm small">
+            <?php if (!empty($publicHearings)): ?>
+              <?php foreach ($publicHearings as $hearing): ?>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="fw-semibold">
+                      <?php echo htmlspecialchars($hearing['title'] ?? 'Untitled'); ?>
+                    </div>
+                    <p class="text-muted small mb-0">
+                      <?php echo htmlspecialchars($hearing['description'] ?? 'No description.'); ?>
+                    </p>
+                  </div>
+                  <div>
+                    <?php if (!empty($hearing['file_path'])): ?>
+                      <a href="<?php echo htmlspecialchars($hearing['file_path']); ?>" class="btn btn-outline-primary btn-sm" target="_blank">Preview</a>
+                    <?php endif; ?>
+                  </div>
                 </div>
-                <div
-                  id="weather-forecast"
-                  class="d-flex justify-content-around small flex-wrap"
-                ></div>
-              </div>
-            </div>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <div class="list-group-item text-muted">No records.</div>
+            <?php endif; ?>
+          </div>
+        </div>
 
-            <!-- PAGASA Link -->
-            <div
-              class="text-center mb-3 animate-on-scroll"
-              data-animate="animate__fadeInUp"
-            >
-              <a
-                href="https://www.pagasa.dost.gov.ph/"
-                target="_blank"
-                class="btn btn-outline-light btn-sm bg-primary text-white"
-              >
-                DOST PAGASA Weather Update
-              </a>
-            </div>
-
-            <!-- Mini Map of Daet -->
-            <div
-              class="card animate-on-scroll"
-              data-animate="animate__fadeInUp"
-            >
-              <div class="card-header bg-primary text-white text-center">
-                📍 Location of Daet
-              </div>
-              <div class="card-body p-0">
-                <!-- Responsive Map -->
-                <div class="ratio ratio-16x9">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62934.06403432444!2d122.935!3d14.112!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3398ab5f4e0a6a4b%3A0x5a4c7b8c53f8f0a2!2sDaet%2C%20Camarines%20Norte!5e0!3m2!1sen!2sph!4v1694438123456"
-                    style="border: 0"
-                    allowfullscreen=""
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"
-                  >
-                  </iframe>
+        <!-- Ordinances -->
+        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInLeft">
+          <h6 class="fw-bold mb-1">Recent Ordinances</h6>
+          <div class="list-group shadow-sm small">
+            <?php if (!empty($recentOrdinances)): ?>
+              <?php foreach ($recentOrdinances as $ordinance): ?>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="fw-semibold">
+                      <?php echo htmlspecialchars($ordinance['title'] ?? 'Untitled'); ?>
+                    </div>
+                    <p class="text-muted small mb-0">
+                      <?php echo htmlspecialchars($ordinance['description'] ?? 'No description.'); ?>
+                    </p>
+                  </div>
+                  <div>
+                    <?php if (!empty($ordinance['file_path'])): ?>
+                      <a href="<?php echo htmlspecialchars($ordinance['file_path']); ?>" class="btn btn-primary btn-sm" target="_blank">Preview</a>
+                    <?php endif; ?>
+                  </div>
                 </div>
-              </div>
-            </div>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <div class="list-group-item text-muted">No records.</div>
+            <?php endif; ?>
+          </div>
+        </div>
 
-            <!-- Social Media Links -->
-            <div
-              class="text-center mt-4 animate-on-scroll"
-              data-animate="animate__fadeInUp"
-            >
-              <h6>Follow Us</h6>
-              <a
-                href="https://www.facebook.com/lgudaet"
-                target="_blank"
-                class="social-icon"
-              >
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a
-                href="https://twitter.com/lgudaet"
-                target="_blank"
-                class="social-icon"
-              >
-                <i class="fab fa-twitter"></i>
-              </a>
-              <a
-                href="https://www.instagram.com/lgudaet"
-                target="_blank"
-                class="social-icon"
-              >
-                <i class="fab fa-instagram"></i>
-              </a>
-              <a
-                href="https://www.youtube.com/@lgudaet"
-                target="_blank"
-                class="social-icon"
-              >
-                <i class="fab fa-youtube"></i>
-              </a>
-            </div>
+        <!-- Resolutions -->
+        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInRight">
+          <h6 class="fw-bold mb-1">Resolutions</h6>
+          <div class="list-group shadow-sm small">
+            <?php if (!empty($resolutions)): ?>
+              <?php foreach ($resolutions as $resolution): ?>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="fw-semibold">
+                      <?php echo htmlspecialchars($resolution['title'] ?? 'Untitled'); ?>
+                    </div>
+                    <p class="text-muted small mb-0">
+                      <?php echo htmlspecialchars($resolution['description'] ?? 'No description.'); ?>
+                    </p>
+                  </div>
+                  <div>
+                    <?php if (!empty($resolution['file_path'])): ?>
+                      <a href="<?php echo htmlspecialchars($resolution['file_path']); ?>" class="btn btn-outline-primary btn-sm" target="_blank">Preview</a>
+                    <?php endif; ?>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <div class="list-group-item text-muted">No records.</div>
+            <?php endif; ?>
           </div>
         </div>
       </div>
-    </section>
+
+      <!-- Right column -->
+      <div class="col-lg-4">
+        <!-- Weather -->
+        <div class="card text-center mb-3 animate-on-scroll" data-animate="animate__fadeInUp">
+          <div class="card-body bg-primary text-white p-3">
+            <h6 class="card-title mb-2">Daet Weather</h6>
+            <div id="weather-today"><p class="mb-2">Loading...</p></div>
+            <div id="weather-forecast" class="d-flex justify-content-around small flex-wrap"></div>
+          </div>
+        </div>
+
+        <!-- Map -->
+        <div class="card mb-3 animate-on-scroll" data-animate="animate__fadeInUp">
+          <div class="card-header bg-primary text-white text-center py-2">📍 Daet</div>
+          <div class="ratio ratio-16x9">
+            <iframe src="https://www.google.com/maps?q=Daet,Camarines%20Norte&output=embed" style="border:0" allowfullscreen loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <!-- Announcements -->
+        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInUp">
+          <h6 class="fw-bold mb-2">Announcements</h6>
+          <div class="list-group shadow-sm small">
+            <?php foreach ($announcements as $announcement): ?>
+              <div class="list-group-item border-start border-4 border-warning">
+                <div class="fw-semibold text-warning mb-1"><?php echo htmlspecialchars($announcement['title']); ?></div>
+                <p class="text-muted small mb-0"><?php echo htmlspecialchars($announcement['description']); ?></p>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+
+        <!-- Socials -->
+        <div class="text-center animate-on-scroll" data-animate="animate__fadeInUp">
+          <h6>Follow Us</h6>
+          <a href="https://www.facebook.com/lgudaet" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://twitter.com/lgudaet" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
+          <a href="https://www.instagram.com/lgudaet" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.youtube.com/@lgudaet" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
 
     <!-- Projects-->
     <section class="projects-section bg-light" id="projects">
