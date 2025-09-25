@@ -2,6 +2,88 @@
 $page_title = 'Maogmang Daet';
 $activePage = 'home';
 include 'header.php';
+
+function formatFileTitle(string $filePath): string
+{
+    $fileName = pathinfo($filePath, PATHINFO_FILENAME);
+    $spaced = preg_replace('/[._-]+/', ' ', $fileName);
+
+    return ucwords(trim((string) $spaced));
+}
+
+function buildDocumentList(array $files, string $descriptionTemplate): array
+{
+    $items = [];
+
+    foreach (array_slice($files, 0, 2) as $index => $filePath) {
+        $items[] = [
+            'title' => formatFileTitle($filePath),
+            'description' => sprintf($descriptionTemplate, $index + 1),
+            'file_path' => $filePath,
+        ];
+    }
+
+    return $items;
+}
+
+$executiveFiles = [
+    'assets/uploads/CC-2023-UPDATED-NEW.1111.pdf',
+    'assets/uploads/RESOLUTION-NO.003-2021.MUNICIPAL.ORDINANCE.NO_.393-2021.pdf',
+    'assets/uploads/RESOLUTION-NO.051-2021.MUNICIPAL.ORDINANCE.NO_.398-2021.pdf',
+];
+
+$hearingFiles = [
+    'assets/uploads/RESOLUTION-NO.062-2021.MUNICIPAL.ORDINANCE.NO_.400-2021.pdf',
+    'assets/uploads/RESOLUTION-NO.077-2021.MUNICIPAL.ORDINANCE.NO_.401-2021.pdf',
+    'assets/uploads/RESOLUTION-NO.096-2021.MUNICIPAL.ORDINANCE.NO_.402-2021.pdf',
+];
+
+$ordinanceFiles = [
+    'assets/uploads/RESOLUTION-NO.097-2021.MUNICIPAL.ORDINANCE.NO_.403-2021.pdf',
+    'assets/uploads/RESOLUTION-NO.098-2021.MUNICIPAL.ORDINANCE.NO_.404-2021.pdf',
+    'assets/uploads/RESOLUTION-NO.099-2021.MUNICIPAL.ORDINANCE.NO_.405-2021.pdf',
+];
+
+$resolutionFiles = [
+    'assets/uploads/RESOLUTION-NO.108-2021.MUNICIPAL.ORDINANCE.NO_.406-2021.pdf',
+    'assets/uploads/RESOLUTION-NO.114-2021.APPROPRIATION.ORDINANCE.NO_.01-2021.pdf',
+    'assets/uploads/RESOLUTION-NO.122-2021.MUNICIPAL.ORDINANCE.NO_.407-2021.pdf',
+];
+
+$executiveIssuances = buildDocumentList(
+    $executiveFiles,
+    'Placeholder description for Executive Issuance %d. Details will be managed via the admin panel.'
+);
+
+$publicHearings = buildDocumentList(
+    $hearingFiles,
+    'Placeholder description for Public Hearing %d. Supporting documents will be uploaded by the admin panel.'
+);
+
+$recentOrdinances = buildDocumentList(
+    $ordinanceFiles,
+    'Placeholder description for Ordinance %d. Additional context will be supplied later.'
+);
+
+$resolutions = buildDocumentList(
+    $resolutionFiles,
+    'Placeholder description for Resolution %d. More information will be available soon.'
+);
+
+$announcements = [
+    [
+        'title' => 'Community Cleanup Drive',
+        'description' => 'Join the town-wide cleanup along major thoroughfares this Saturday. Gloves and sacks will be provided.',
+    ],
+    [
+        'title' => 'Water Service Advisory',
+        'description' => 'Expect intermittent water supply in Barangay Camambugan from 9:00 AM to 4:00 PM due to line maintenance.',
+    ],
+    [
+        'title' => 'Scholarship Application Reminder',
+        'description' => 'Municipal scholarship applications are open until June 30. Submit requirements at the Mayor’s Office.',
+    ],
+];
 ?>
 
  <!-- Masthead-->
@@ -61,107 +143,260 @@ include 'header.php';
           What's New in Daet?
         </h2>
 
+         <?php if ($dbErrorMessage): ?>
+          <div class="alert alert-warning small text-center mb-4" role="alert">
+            <?php echo htmlspecialchars($dbErrorMessage); ?>
+          </div>
+        <?php endif; ?>
+
         <div class="row">
           <!-- Left column: Updates -->
           <div class="col-lg-8">
             <!-- Executive Issuances -->
             <div
-              class="list-group mb-3 animate-on-scroll"
+              class="mb-4 animate-on-scroll"
               data-animate="animate__fadeInLeft"
             >
-              <div class="list-group-item">
-                <h5 class="mb-1">Executive Issuances</h5>
-                <p class="mb-1 small">2025 Executive Orders</p>
+               <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <h5 class="mb-1">Executive Issuances</h5>
+                  <p class="text-muted small mb-0">
+                    Latest executive orders released by the municipal government.
+                  </p>
+                </div>
+              </div>
+              <div class="list-group shadow-sm">
+                <?php if (!empty($executiveIssuances)): ?>
+                  <?php foreach ($executiveIssuances as $document): ?>
+                    <?php
+                      $description = isset($document['description']) && trim((string) $document['description']) !== ''
+                        ? $document['description']
+                        : 'No description provided.';
+                      $filePath = isset($document['file_path']) ? (string) $document['file_path'] : '';
+                    ?>
+                    <div class="list-group-item d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3">
+                      <div>
+                        <div class="fw-semibold mb-1">
+                          <?php echo htmlspecialchars((string) ($document['title'] ?? 'Untitled Document')); ?>
+                        </div>
+                        <p class="text-muted small mb-0">
+                          <?php echo htmlspecialchars($description); ?>
+                        </p>
+                      </div>
+                      <div class="ms-sm-auto">
+                        <?php if ($filePath !== ''): ?>
+                          <a
+                            href="<?php echo htmlspecialchars($filePath); ?>"
+                            class="btn btn-primary btn-sm"
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            Preview
+                          </a>
+                        <?php else: ?>
+                          <span class="badge bg-secondary align-self-center">No file</span>
+                        <?php endif; ?>
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
+                <?php else: ?>
+                  <div class="list-group-item text-muted">No records available.</div>
+                <?php endif; ?>
               </div>
             </div>
 
             <!-- Hearings -->
             <div
-              class="list-group mb-3 animate-on-scroll"
+               class="mb-4 animate-on-scroll"
               data-animate="animate__fadeInRight"
             >
-              <div class="list-group-item">
-                <h5 class="mb-1">Hearings</h5>
-                <p class="mb-1 small">Land Use Public Hearing (1 PM, May 21)</p>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <h5 class="mb-1">Public Hearings</h5>
+                  <p class="text-muted small mb-0">
+                    Scheduled hearings and consultation documents for the community.
+                  </p>
+                </div>
+              </div>
+              <div class="list-group shadow-sm">
+                <?php if (!empty($publicHearings)): ?>
+                  <?php foreach ($publicHearings as $hearing): ?>
+                    <?php
+                      $description = isset($hearing['description']) && trim((string) $hearing['description']) !== ''
+                        ? $hearing['description']
+                        : 'No description provided.';
+                      $filePath = isset($hearing['file_path']) ? (string) $hearing['file_path'] : '';
+                    ?>
+                    <div class="list-group-item d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3">
+                      <div>
+                        <div class="fw-semibold mb-1">
+                          <?php echo htmlspecialchars((string) ($hearing['title'] ?? 'Untitled Document')); ?>
+                        </div>
+                        <p class="text-muted small mb-0">
+                          <?php echo htmlspecialchars($description); ?>
+                        </p>
+                      </div>
+                      <div class="ms-sm-auto">
+                        <?php if ($filePath !== ''): ?>
+                          <a
+                            href="<?php echo htmlspecialchars($filePath); ?>"
+                            class="btn btn-outline-primary btn-sm"
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            Preview
+                          </a>
+                        <?php else: ?>
+                          <span class="badge bg-secondary align-self-center">No file</span>
+                        <?php endif; ?>
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
+                <?php else: ?>
+                  <div class="list-group-item text-muted">No records available.</div>
+                <?php endif; ?>
               </div>
             </div>
+
 
             <!-- Recent Ordinances -->
             <div
-              class="list-group mb-3 animate-on-scroll"
+               class="mb-4 animate-on-scroll"
               data-animate="animate__fadeInLeft"
             >
-              <div class="list-group-item">
-                <h5 class="mb-1">Recent Ordinances</h5>
-                <p class="mb-1 small">
-                  Ordinance No. 2025-056: Amending the Transport and Traffic
-                  Code of Daet...
-                </p>
-                <p class="mb-1 small">
-                  Ordinance No. 2025-054: Granting cash gift to senior citizens
-                  aged 96–99...
-                </p>
-                <p class="mb-1 small">
-                  Ordinance No. 2025-056: Amending the Transport and Traffic
-                  Code of Daet...
-                </p>
-                <p class="mb-1 small">
-                  Ordinance No. 2025-054: Granting cash gift to senior citizens
-                  aged 96–99...
-                </p>
-                <p class="mb-1 small">
-                  Ordinance No. 2025-056: Amending the Transport and Traffic
-                  Code of Daet...
-                </p>
-                <p class="mb-1 small">
-                  Ordinance No. 2025-054: Granting cash gift to senior citizens
-                  aged 96–99...
-                </p>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <h5 class="mb-1">Recent Ordinances</h5>
+                  <p class="text-muted small mb-0">
+                    Newly approved ordinances affecting the municipality.
+                  </p>
+                </div>
+              </div>
+              <div class="list-group shadow-sm">
+                <?php if (!empty($recentOrdinances)): ?>
+                  <?php foreach ($recentOrdinances as $ordinance): ?>
+                    <?php
+                      $description = isset($ordinance['description']) && trim((string) $ordinance['description']) !== ''
+                        ? $ordinance['description']
+                        : 'No description provided.';
+                      $filePath = isset($ordinance['file_path']) ? (string) $ordinance['file_path'] : '';
+                    ?>
+                    <div class="list-group-item d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3">
+                      <div>
+                        <div class="fw-semibold mb-1">
+                          <?php echo htmlspecialchars((string) ($ordinance['title'] ?? 'Untitled Document')); ?>
+                        </div>
+                        <p class="text-muted small mb-0">
+                          <?php echo htmlspecialchars($description); ?>
+                        </p>
+                      </div>
+                      <div class="ms-sm-auto">
+                        <?php if ($filePath !== ''): ?>
+                          <a
+                            href="<?php echo htmlspecialchars($filePath); ?>"
+                            class="btn btn-primary btn-sm"
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            Preview
+                          </a>
+                        <?php else: ?>
+                          <span class="badge bg-secondary align-self-center">No file</span>
+                        <?php endif; ?>
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
+                <?php else: ?>
+                  <div class="list-group-item text-muted">No records available.</div>
+                <?php endif; ?>
               </div>
             </div>
+
 
             <!-- Resolutions -->
             <div
-              class="list-group mb-3 animate-on-scroll"
+              class="mb-4 animate-on-scroll"
               data-animate="animate__fadeInRight"
             >
-              <div class="list-group-item">
-                <h5 class="mb-1">Resolutions</h5>
-                <p class="mb-1 small">
-                  Resolution No. 2025-411: RESOLUTION EXTENDING THE VALIDITY OF
-                  THE EXPERI...
-                </p>
-                <p class="mb-1 small">
-                  Resolution No. 2025-412: RESOLUTION EXTENDING THE VALIDITY OF
-                  THE EXPERI...
-                </p>
-                <p class="mb-1 small">
-                  Resolution No. 2025-413: RESOLUTION EXTENDING THE VALIDITY OF
-                  THE EXPERI...
-                </p>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <h5 class="mb-1">Resolutions</h5>
+                  <p class="text-muted small mb-0">
+                    Selected council resolutions and supporting documents.
+                  </p>
+                </div>
+              </div>
+              <div class="list-group shadow-sm">
+                <?php if (!empty($resolutions)): ?>
+                  <?php foreach ($resolutions as $resolution): ?>
+                    <?php
+                      $description = isset($resolution['description']) && trim((string) $resolution['description']) !== ''
+                        ? $resolution['description']
+                        : 'No description provided.';
+                      $filePath = isset($resolution['file_path']) ? (string) $resolution['file_path'] : '';
+                    ?>
+                    <div class="list-group-item d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3">
+                      <div>
+                        <div class="fw-semibold mb-1">
+                          <?php echo htmlspecialchars((string) ($resolution['title'] ?? 'Untitled Document')); ?>
+                        </div>
+                        <p class="text-muted small mb-0">
+                          <?php echo htmlspecialchars($description); ?>
+                        </p>
+                      </div>
+                      <div class="ms-sm-auto">
+                        <?php if ($filePath !== ''): ?>
+                          <a
+                            href="<?php echo htmlspecialchars($filePath); ?>"
+                            class="btn btn-outline-primary btn-sm"
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            Preview
+                          </a>
+                        <?php else: ?>
+                          <span class="badge bg-secondary align-self-center">No file</span>
+                        <?php endif; ?>
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
+                <?php else: ?>
+                  <div class="list-group-item text-muted">No records available.</div>
+                <?php endif; ?>
               </div>
             </div>
+
+
+
+          
 
             <!-- Announcements / Advisories -->
             <div
-              class="list-group mb-3 animate-on-scroll"
+              class="mb-4 animate-on-scroll"
               data-animate="animate__fadeInUp"
-              data-extra="animate__pulse animate__infinite"
             >
-              <div class="list-group-item bg-warning bg-opacity-25">
-                <h5 class="mb-1 text-danger">⚠️ Announcements & Advisories</h5>
-                <p class="mb-1 small">
-                  Scheduled power interruption on Sept 20, 2025 (8AM–5PM)
-                  affecting Brgy. Alawihao.
-                </p>
-                <p class="mb-0 small">
-                  Water service interruption – Sept 21, 2025 (10AM–4PM) due to
-                  line maintenance.
-                </p>
+           <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <h5 class="mb-1">Announcements & Advisories</h5>
+                  <p class="text-muted small mb-0">
+                    Stay tuned for updates from the Municipal Information Office.
+                  </p>
+                </div>
+              </div>
+              <div class="list-group shadow-sm">
+                <?php foreach ($announcements as $announcement): ?>
+                  <div class="list-group-item border-start border-4 border-warning">
+                    <div class="fw-semibold text-warning mb-1">
+                      <?php echo htmlspecialchars($announcement['title']); ?>
+                    </div>
+                    <p class="text-muted small mb-0">
+                      <?php echo htmlspecialchars($announcement['description']); ?>
+                    </p>
+                  </div>
+                <?php endforeach; ?>
               </div>
             </div>
           </div>
-
           <!-- Right column: Weather + Map + Social Media -->
           <div class="col-lg-4">
             <!-- Weather Card -->
