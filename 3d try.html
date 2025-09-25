@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FPS Map Trial – Squid Game Hide and Seek</title>
+
+  <!-- Import Map for Three.js -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.155.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <style>
+    body { margin: 0; overflow: hidden; background: #111; }
+    #mapCanvas { width: 100vw; height: 100vh; display: block; }
+    .info {
+      position: absolute;
+      top: 10px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: sans-serif;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="info">
+    <b>W/A/S/D</b> = move | <b>Shift</b> = run | <b>Space</b> = jump | Mouse = look
+  </div>
+  <canvas id="mapCanvas"></canvas>
+
+  <script type="module">
+    import * as THREE from "three";
+    import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+    import { FirstPersonControls } from "three/addons/controls/FirstPersonControls.js";
+
+    const canvas = document.getElementById("mapCanvas");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x202020);
+
+    // Camera
+    const camera = new THREE.PerspectiveCamera(
+      75, window.innerWidth / window.innerHeight, 0.1, 500
+    );
+    camera.position.set(0, 2, 10); // starting spawn point
+
+    // Lights
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.2));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.position.set(10, 20, 10);
+    scene.add(dirLight);
+
+    // FPS Controls
+    const controls = new FirstPersonControls(camera, renderer.domElement);
+    controls.lookSpeed = 0.02;
+    controls.movementSpeed = 2;
+    controls.lookVertical = true;
+
+    const clock = new THREE.Clock();
+
+    // Jump & Run
+    let velocityY = 0;
+    let isJumping = false;
+    const GRAVITY = -9.8;
+    const JUMP_FORCE = 5;
+    const normalSpeed = 2;
+    const runSpeed = 6;
+
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "ShiftLeft") controls.movementSpeed = runSpeed;
+      if (e.code === "Space" && !isJumping) {
+        velocityY = JUMP_FORCE;
+        isJumping = true;
+      }
+    });
+    window.addEventListener("keyup", (e) => {
+      if (e.code === "ShiftLeft") controls.movementSpeed = normalSpeed;
+    });
+
+    // Load Map
+    let mapModel;
+    const collidableMeshes = [];
+    const loader = new GLTFLoader();
+    loader.load("assets/3d/squid_game_hide_and_seek.glb", (gltf) => {
+      mapModel = gltf.scene;
+      mapModel.scale.set(1, 1, 1);     // adjust if needed
+      mapModel.position.set(0, 0, 0);  // center
+      scene.add(mapModel);
+
+      mapModel.traverse((child) => {
+        if (child.isMesh) {
+          collidableMeshes.push(child);
+          child.material.side = THREE.DoubleSide;
+        }
+      });
+    });
+
+    // Raycaster for collisions
+    const raycaster = new THREE.Raycaster();
+
+    function checkCollisions(oldPos) {
+      if (collidableMeshes.length === 0) return;
+
+      const dir = new THREE.Vector3();
+      camera.getWorldDirection(dir);
+
+      raycaster.set(camera.position, dir.normalize());
+      const intersects = raycaster.intersectObjects(collidableMeshes, true);
+
+      if (intersects.length > 0 && intersects[0].distance < 1.0) {
+        const normal = intersects[0].face.normal.clone().normalize();
+        const movement = new THREE.Vector3().subVectors(camera.position, oldPos);
+        const slide = movement.sub(normal.multiplyScalar(movement.dot(normal)));
+        camera.position.copy(oldPos.clone().add(slide));
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+
+      const oldPos = camera.position.clone();
+
+      // Gravity
+      velocityY += GRAVITY * delta;
+      camera.position.y += velocityY * delta;
+      if (camera.position.y <= 2) {
+        camera.position.y = 2;
+        velocityY = 0;
+        isJumping = false;
+      }
+
+      // Controls update
+      controls.update(delta);
+
+      // Collision check
+      checkCollisions(oldPos);
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Handle resize
+    window.addEventListener("resize", () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
+  </script>
+</body>
+</html>
