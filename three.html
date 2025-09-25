@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bantayog Monument 3D Tour (OBJ+MTL)</title>
+  <style>
+    body { margin:0; overflow:hidden; font-family:sans-serif; }
+    #ui {
+      position:absolute; top:10px; left:10px;
+      background:rgba(255,255,255,.9); padding:8px 12px; border-radius:10px;
+      box-shadow:0 2px 10px rgba(0,0,0,.1);
+    }
+    button { margin:4px; padding:6px 10px; cursor:pointer; }
+  </style>
+</head>
+<body>
+<div id="ui">
+  <button id="prevBtn">⬅ Previous</button>
+  <button id="nextBtn">Next ➡</button>
+  <button id="playBtn">▶ Auto Tour</button>
+  <button id="stopBtn">⏸ Stop</button>
+  <button id="resetBtn">Reset View</button>
+</div>
+
+<!-- Classic (non-module) scripts that work in your environment -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/loaders/MTLLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.146.0/examples/js/loaders/OBJLoader.js"></script>
+
+<script>
+  let scene, camera, renderer, controls, model;
+  let tour = [];
+  let tourIdx = 0;
+  let playing = false;
+  let lerpStart, lerpDur, startPos, startTgt, endPos, endTgt;
+
+  init();
+  animate();
+
+  function init() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xbfd1e5);
+
+    camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 3000);
+    camera.position.set(25, 18, 30);
+
+    renderer = new THREE.WebGLRenderer({ antialias:true });
+    renderer.setSize(innerWidth, innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Lights
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1));
+    const sun = new THREE.DirectionalLight(0xffffff, 1);
+    sun.position.set(-60, 80, 60);
+    scene.add(sun);
+
+    // Ground
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(400, 400),
+      new THREE.MeshStandardMaterial({ color: 0xdedede })
+    );
+    ground.rotation.x = -Math.PI/2;
+    scene.add(ground);
+
+    // Controls
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.addEventListener('start', () => { playing = false; }); // stop auto tour on user interaction
+
+    // Load OBJ+MTL
+    const mtlLoader = new THREE.MTLLoader();
+    mtlLoader.load('assets/3d/bantayog.mtl', (materials) => {
+      materials.preload();
+      const objLoader = new THREE.OBJLoader();
+      objLoader.setMaterials(materials);
+      objLoader.load('assets/3d/bantayog.obj', (obj) => {
+        model = obj;
+        scene.add(model);
+
+        // Fit and set waypoints
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+
+        // Basic tour waypoints around the monument (overview, front, right, left, top)
+        tour = [
+          { pos: center.clone().add(new THREE.Vector3(maxDim*1.8, maxDim*1.2, maxDim*1.8)), tgt: center },
+          { pos: center.clone().add(new THREE.Vector3(0, maxDim*0.8, maxDim*2.0)),          tgt: center },
+          { pos: center.clone().add(new THREE.Vector3(maxDim*2.0, maxDim*0.9, 0)),          tgt: center },
+          { pos: center.clone().add(new THREE.Vector3(-maxDim*2.0, maxDim*0.9, 0)),         tgt: center },
+          { pos: center.clone().add(new THREE.Vector3(0, maxDim*3.0, 0)),                   tgt: center }
+        ];
+
+        // Start at first stop
+        goTo(tourIdx, 0); // instant
+      });
+    });
+
+    // UI
+    document.getElementById('nextBtn').onclick = () => step(1);
+    document.getElementById('prevBtn').onclick = () => step(-1);
+    document.getElementById('playBtn').onclick = () => { playing = true; lerpDur = 2500; };
+    document.getElementById('stopBtn').onclick = () => { playing = false; };
+    document.getElementById('resetBtn').onclick = () => { controls.reset(); playing = false; };
+    addEventListener('resize', onResize);
+  }
+
+  function step(dir) {
+    if (!tour.length) return;
+    tourIdx = (tourIdx + dir + tour.length) % tour.length;
+    goTo(tourIdx, 1500);
+  }
+
+  function goTo(i, durationMs) {
+    if (!tour.length) return;
+    const wp = tour[i];
+    startPos = camera.position.clone();
+    startTgt = controls.target.clone();
+    endPos = wp.pos.clone();
+    endTgt = wp.tgt.clone();
+    lerpDur = durationMs;
+    lerpStart = performance.now();
+  }
+
+  function updateLerp() {
+    if (!lerpDur) return;
+    const t = Math.min((performance.now() - lerpStart) / lerpDur, 1);
+    camera.position.lerpVectors(startPos, endPos, t);
+    controls.target.lerpVectors(startTgt, endTgt, t);
+    if (t >= 1) lerpDur = 0;
+  }
+
+  function autoPlay() {
+    if (!playing || !tour.length || lerpDur) return;
+    // move to next waypoint when idle
+    step(1);
+  }
+
+  function onResize() {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    updateLerp();
+    autoPlay();
+    controls.update();
+    renderer.render(scene, camera);
+  }
+</script>
+</body>
+</html>

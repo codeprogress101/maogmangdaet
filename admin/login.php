@@ -8,7 +8,7 @@ $pdo = get_pdo();
 
 if (current_user()) {
     redirect('dashboard.php');
-}
+} 
 
 $errors = [];
 $message = '';

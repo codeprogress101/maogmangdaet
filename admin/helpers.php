@@ -39,10 +39,23 @@ function secure_session_start(): void
     }
 
     session_name(SESSION_NAME);
+
+    $cookiePath = dirname($_SERVER['SCRIPT_NAME'] ?? '/admin');
+    $cookiePath = str_replace('\\', '/', $cookiePath);
+    $cookiePath = rtrim($cookiePath, '/');
+    if ($cookiePath === '') {
+        $cookiePath = '/';
+    } else {
+        $cookiePath .= '/';
+    }
+
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443);
+
     session_set_cookie_params([
         'lifetime' => 0,
-        'path' => '/admin',
-        'secure' => true,      // Ensures cookies are only sent via HTTPS.
+        'path' => $cookiePath,
+        'secure' => $isHttps,  // Ensures cookies are only sent via HTTPS when available.
         'httponly' => true,    // Mitigates JavaScript access to the session.
         'samesite' => 'Strict' // Prevents CSRF via cross-site requests.
     ]);
