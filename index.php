@@ -310,11 +310,11 @@ $announcements = [
 
 
 
-    <!-- Projects-->
+    <!--News Projects-->
     <section class="projects-section bg-light" id="projects">
       <div class="container px-4 px-lg-5">
         <h2 class="mx-auto mt-2 mb-5">News and Updates</h2>
-        <!-- Featured Project Row-->
+        <!-- Featured News Row-->
         <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
           <div class="col-xl-8 col-lg-7">
             <img
@@ -343,7 +343,7 @@ $announcements = [
             </div>
           </div>
         </div>
-        <!-- Project One Row-->
+        <!-- News One Row-->
         <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
           <div class="col-lg-6">
             <img class="img-fluid" src="assets/img/news2.JPG" alt="..." />
@@ -378,7 +378,7 @@ $announcements = [
             </div>
           </div>
         </div>
-        <!-- Project Two Row-->
+        <!-- News Two Row-->
         <div class="row gx-0 justify-content-center">
           <div class="col-lg-6">
             <img class="img-fluid" src="assets/img/news3.JPG" alt="..." />
