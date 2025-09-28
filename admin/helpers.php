@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 
+const SLUGGABLE_TABLES = [
+    'news',
+    'announcements',
+    'executive_issuances',
+    'ordinances',
+    'resolutions',
+    'public_hearings',
+];
+
+
 /**
  * Build (and memoise) the PDO connection using secure defaults.
  */
@@ -294,9 +304,14 @@ function e(?string $value): string
 function save_content(PDO $pdo, string $table, array $data, ?int $id = null): int
 {
     if ($id) {
-        $stmt = $pdo->prepare("UPDATE `{$table}` SET title = :title, description = :description, pdf_path = :pdf_path, updated_at = NOW() WHERE id = :id");
+        if (!in_array($table, SLUGGABLE_TABLES, true)) {
+        throw new InvalidArgumentException('Unsupported content table.');
+        }   
+
+        $stmt = $pdo->prepare("UPDATE `{$table}` SET title = :title, slug = :slug, description = :description, pdf_path = :pdf_path, updated_at = NOW() WHERE id = :id");
         $stmt->execute([
             'title' => $data['title'],
+            'slug' => $data['slug'],
             'description' => $data['description'],
             'pdf_path' => $data['pdf_path'],
             'id' => $id,
@@ -304,9 +319,10 @@ function save_content(PDO $pdo, string $table, array $data, ?int $id = null): in
         return $id;
     }
 
-    $stmt = $pdo->prepare("INSERT INTO `{$table}` (title, description, pdf_path, created_at, updated_at) VALUES (:title, :description, :pdf_path, NOW(), NOW())");
+    $stmt = $pdo->prepare("INSERT INTO `{$table}` (title, slug, description, pdf_path, created_at, updated_at) VALUES (:title, :slug, :description, :pdf_path, NOW(), NOW())");
     $stmt->execute([
         'title' => $data['title'],
+        'slug' => $data['slug'],
         'description' => $data['description'],
         'pdf_path' => $data['pdf_path'],
     ]);
@@ -396,6 +412,203 @@ function get_content(PDO $pdo, string $table, int $id): ?array
     $row = $stmt->fetch();
 
     return $row ?: null;
+}
+/**
+ * Generate a unique, URL-friendly slug for the news title.
+ */
+function generateSlug(string $title, PDO $conn, ?int $ignoreId = null, string $table = 'news'): string
+{
+    if (!in_array($table, SLUGGABLE_TABLES, true)) {
+        throw new InvalidArgumentException('Unsupported table for slug generation.');
+    }
+
+    $slug = mb_strtolower($title, 'UTF-8');
+    $transliterated = @iconv('UTF-8', 'ASCII//TRANSLIT', $slug);
+    if ($transliterated !== false) {
+        $slug = $transliterated;
+    }
+
+    $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug) ?? '';
+    $slug = preg_replace('/[\s-]+/', '-', $slug) ?? '';
+    $slug = trim($slug, '-');
+
+    if ($slug === '') {
+        $fallback = preg_replace('/[^a-z0-9]+/', '-', $table) ?? 'item';
+        $slug = trim($fallback, '-') ?: 'item';
+    }
+
+    $baseSlug = $slug;
+    $suffix = 2;
+    $query = sprintf('SELECT COUNT(*) FROM `%s` WHERE slug = :slug', $table);
+    if ($ignoreId !== null) {
+        $query .= ' AND id <> :id';
+    }
+    $stmt = $conn->prepare($query);
+
+    while (true) {
+        $params = ['slug' => $slug];
+        if ($ignoreId !== null) {
+            $params['id'] = $ignoreId;
+        }
+
+        $stmt->execute($params);
+        $exists = (int) $stmt->fetchColumn();
+
+        if ($exists === 0) {
+            break;
+        }
+
+        $slug = sprintf('%s-%d', $baseSlug, $suffix);
+        $suffix++;
+    }
+
+    return $slug;
+}
+
+/**
+ * Delete a previously uploaded news image from storage.
+ */
+function delete_news_image(?string $path): void
+{
+    if (!$path) {
+        return;
+    }
+
+    $filePath = __DIR__ . '/../' . ltrim($path, '/');
+    $realFilePath = realpath($filePath);
+    $uploadsPath = realpath(NEWS_UPLOAD_DIR);
+
+    if ($realFilePath && $uploadsPath && strpos($realFilePath, $uploadsPath) === 0 && is_file($realFilePath)) {
+        unlink($realFilePath);
+    }
+}
+
+/**
+ * Handle the upload of a news image, enforcing format and size constraints.
+ */
+function handle_news_image_upload(array $file, ?string $currentImagePath = null): array
+{
+    if (empty($file['name']) || (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+        return ['path' => $currentImagePath, 'errors' => [], 'uploaded' => false];
+    }
+
+    $errors = [];
+
+    if ((int) $file['error'] !== UPLOAD_ERR_OK) {
+        $errors[] = 'Image upload failed.';
+        return ['path' => $currentImagePath, 'errors' => $errors, 'uploaded' => false];
+    }
+
+    if ((int) $file['size'] > MAX_NEWS_IMAGE_SIZE) {
+        $errors[] = 'Image exceeds the maximum size of 5 MB.';
+    }
+
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($file['tmp_name']) ?: '';
+
+    if (!isset(NEWS_IMAGE_ALLOWED_TYPES[$mime])) {
+        $errors[] = 'Only JPG, PNG, or GIF images are allowed.';
+    }
+
+    if ($errors) {
+        return ['path' => $currentImagePath, 'errors' => $errors];
+    }
+
+    if (!is_dir(NEWS_UPLOAD_DIR) && !mkdir(NEWS_UPLOAD_DIR, 0755, true) && !is_dir(NEWS_UPLOAD_DIR)) {
+        $errors[] = 'Failed to prepare upload directory.';
+        return ['path' => $currentImagePath, 'errors' => $errors, 'uploaded' => false];
+    }
+
+    $extension = NEWS_IMAGE_ALLOWED_TYPES[$mime];
+    $filename = sprintf('%s_%s.%s', date('YmdHis'), bin2hex(random_bytes(6)), $extension);
+    $destination = rtrim(NEWS_UPLOAD_DIR, '/') . '/' . $filename;
+
+    if (!move_uploaded_file($file['tmp_name'], $destination)) {
+        $errors[] = 'Failed to store uploaded image.';
+        return ['path' => $currentImagePath, 'errors' => $errors, 'uploaded' => false];
+    }
+
+    $publicPath = rtrim(NEWS_IMAGE_PUBLIC_PATH, '/') . '/' . $filename;
+
+    return ['path' => $publicPath, 'errors' => [], 'uploaded' => true];
+}
+
+/**
+ * Retrieve a single news record by its identifier.
+ */
+function find_news(PDO $pdo, int $id): ?array
+{
+    $stmt = $pdo->prepare('SELECT * FROM news WHERE id = :id LIMIT 1');
+    $stmt->execute(['id' => $id]);
+    $row = $stmt->fetch();
+
+    return $row ?: null;
+}
+
+/**
+ * Insert a new news article into the database.
+ */
+function create_news(PDO $pdo, string $title, string $content, ?string $imagePath): int
+{
+    $slug = generateSlug($title, $pdo);
+
+    $stmt = $pdo->prepare('INSERT INTO news (title, slug, content, image_path, created_at, updated_at) VALUES (:title, :slug, :content, :image_path, NOW(), NOW())');
+    $stmt->execute([
+        'title' => $title,
+        'slug' => $slug,
+        'content' => $content,
+        'image_path' => $imagePath,
+    ]);
+
+    return (int) $pdo->lastInsertId();
+}
+
+/**
+ * Update an existing news article.
+ */
+function update_news(PDO $pdo, int $id, string $title, string $content, ?string $imagePath, bool $regenerateSlug = false): void
+{
+    $news = find_news($pdo, $id);
+    if (!$news) {
+        throw new RuntimeException('News record not found.');
+    }
+
+    $slug = $news['slug'];
+    if ($regenerateSlug) {
+        $slug = generateSlug($title, $pdo, $id);
+    }
+
+    $stmt = $pdo->prepare('UPDATE news SET title = :title, slug = :slug, content = :content, image_path = :image_path, updated_at = NOW() WHERE id = :id');
+    $stmt->execute([
+        'title' => $title,
+        'slug' => $slug,
+        'content' => $content,
+        'image_path' => $imagePath,
+        'id' => $id,
+    ]);
+}
+
+/**
+ * Remove a news article, including its associated image.
+ */
+function delete_news(PDO $pdo, int $id): void
+{
+    $news = find_news($pdo, $id);
+    if ($news && !empty($news['image_path'])) {
+        delete_news_image($news['image_path']);
+    }
+
+    $stmt = $pdo->prepare('DELETE FROM news WHERE id = :id');
+    $stmt->execute(['id' => $id]);
+}
+
+/**
+ * Fetch all news articles ordered by recency.
+ */
+function list_news(PDO $pdo): array
+{
+    $stmt = $pdo->query('SELECT * FROM news ORDER BY created_at DESC');
+    return $stmt->fetchAll();
 }
 
 /**

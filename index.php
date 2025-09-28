@@ -1,89 +1,93 @@
 <?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/includes/database.php';
+
 $page_title = 'Maogmang Daet';
 $activePage = 'home';
-include 'header.php';
 
-function formatFileTitle(string $filePath): string
+function buildNewsUrl(array $article): string
 {
-    $fileName = pathinfo($filePath, PATHINFO_FILENAME);
-    $spaced = preg_replace('/[._-]+/', ' ', $fileName);
-
-    return ucwords(trim((string) $spaced));
+    return sprintf('/news/%d/%s', $article['id'], $article['slug']);
 }
 
-function buildDocumentList(array $files, string $descriptionTemplate): array
+function buildNewsExcerpt(string $content, int $length = 180): string
 {
-    $items = [];
+    $plain = trim(preg_replace('/\s+/', ' ', strip_tags($content)) ?? '');
 
-    foreach (array_slice($files, 0, 2) as $index => $filePath) {
-        $items[] = [
-            'title' => formatFileTitle($filePath),
-            'description' => sprintf($descriptionTemplate, $index + 1),
-            'file_path' => $filePath,
-        ];
+    if (mb_strlen($plain) <= $length) {
+        return $plain;
     }
 
-    return $items;
+    return rtrim(mb_substr($plain, 0, $length - 3)) . '...';
 }
 
-$executiveFiles = [
-    'assets/uploads/CC-2023-UPDATED-NEW.1111.pdf',
-    'assets/uploads/RESOLUTION-NO.003-2021.MUNICIPAL.ORDINANCE.NO_.393-2021.pdf',
-    'assets/uploads/RESOLUTION-NO.051-2021.MUNICIPAL.ORDINANCE.NO_.398-2021.pdf',
-];
+function formatNewsDate(string $date): string
+{
+    return date('F j, Y', strtotime($date));
+}
 
-$hearingFiles = [
-    'assets/uploads/RESOLUTION-NO.062-2021.MUNICIPAL.ORDINANCE.NO_.400-2021.pdf',
-    'assets/uploads/RESOLUTION-NO.077-2021.MUNICIPAL.ORDINANCE.NO_.401-2021.pdf',
-    'assets/uploads/RESOLUTION-NO.096-2021.MUNICIPAL.ORDINANCE.NO_.402-2021.pdf',
-];
+function documentRouteSegment(string $table): string
+{
+  switch ($table) {
+        case 'announcements':
+            return 'announcements';
+        case 'executive_issuances':
+            return 'executive-issuances';
+        case 'ordinances':
+            return 'ordinances';
+        case 'resolutions':
+            return 'resolutions';
+        case 'public_hearings':
+            return 'public-hearings';
+        default:
+            throw new InvalidArgumentException('Unsupported document type.');
+    }
+}
 
-$ordinanceFiles = [
-    'assets/uploads/RESOLUTION-NO.097-2021.MUNICIPAL.ORDINANCE.NO_.403-2021.pdf',
-    'assets/uploads/RESOLUTION-NO.098-2021.MUNICIPAL.ORDINANCE.NO_.404-2021.pdf',
-    'assets/uploads/RESOLUTION-NO.099-2021.MUNICIPAL.ORDINANCE.NO_.405-2021.pdf',
-];
+function buildDocumentUrl(string $table, array $document): string
+{
+    return sprintf('/%s/%d/%s', documentRouteSegment($table), $document['id'], $document['slug']);
+}
 
-$resolutionFiles = [
-    'assets/uploads/RESOLUTION-NO.108-2021.MUNICIPAL.ORDINANCE.NO_.406-2021.pdf',
-    'assets/uploads/RESOLUTION-NO.114-2021.APPROPRIATION.ORDINANCE.NO_.01-2021.pdf',
-    'assets/uploads/RESOLUTION-NO.122-2021.MUNICIPAL.ORDINANCE.NO_.407-2021.pdf',
-];
+function buildDocumentExcerpt(string $description, int $length = 160): string
+{
+  $plain = trim(preg_replace('/\s+/', ' ', strip_tags($description)) ?? '');
 
-$executiveIssuances = buildDocumentList(
-    $executiveFiles,
-    'Placeholder description for Executive Issuance %d. Details will be managed via the admin panel.'
-);
+    if (mb_strlen($plain) <= $length) {
+        return $plain;
+    }
 
-$publicHearings = buildDocumentList(
-    $hearingFiles,
-    'Placeholder description for Public Hearing %d. Supporting documents will be uploaded by the admin panel.'
-);
+    return rtrim(mb_substr($plain, 0, $length - 3)) . '...';
+}
 
-$recentOrdinances = buildDocumentList(
-    $ordinanceFiles,
-    'Placeholder description for Ordinance %d. Additional context will be supplied later.'
-);
+function buildDocumentFileUrl(?string $path): ?string
+{
+    if (!$path) {
+        return null;
+    }
 
-$resolutions = buildDocumentList(
-    $resolutionFiles,
-    'Placeholder description for Resolution %d. More information will be available soon.'
-);
+    // remove the first "/" if it exists
+    return ltrim($path, '/');
+}
 
-$announcements = [
-    [
-        'title' => 'Community Cleanup Drive',
-        'description' => 'Join the town-wide cleanup along major thoroughfares this Saturday. Gloves and sacks will be provided.',
-    ],
-    [
-        'title' => 'Water Service Advisory',
-        'description' => 'Expect intermittent water supply in Barangay Camambugan from 9:00 AM to 4:00 PM due to line maintenance.',
-    ],
-    [
-        'title' => 'Scholarship Application Reminder',
-        'description' => 'Municipal scholarship applications are open until June 30. Submit requirements at the Mayor’s Office.',
-    ],
-];
+function formatDocumentDate(string $date): string
+{
+    return date('F j, Y', strtotime($date));
+}
+
+$executiveIssuances = fetchLatestDocuments('executive_issuances', 3);
+$publicHearings = fetchLatestDocuments('public_hearings', 3);
+$recentOrdinances = fetchLatestDocuments('ordinances', 3);
+$resolutions = fetchLatestDocuments('resolutions', 3);
+$announcements = fetchLatestDocuments('announcements', 2);
+
+$latestNews = fetchLatestNews(3);
+$featuredNews = $latestNews[0] ?? null;
+$secondaryNews = array_slice($latestNews, 1);
+
+include 'header.php';
+
 ?>
 
  <!-- Masthead-->
@@ -143,29 +147,43 @@ $announcements = [
       What's New in Daet?
     </h2>
 
-   
-
-    <div class="row">
+  <div class="row">
       <!-- Left column -->
       <div class="col-lg-8">
         <!-- Executive Issuances -->
-        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInLeft">
+        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInLeft" id="executive-issuances">
           <h6 class="fw-bold mb-1">Executive Issuances</h6>
           <div class="list-group shadow-sm small">
             <?php if (!empty($executiveIssuances)): ?>
               <?php foreach ($executiveIssuances as $document): ?>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
+                <?php
+                  $detailUrl = htmlspecialchars(buildDocumentUrl('executive_issuances', $document), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $pdfUrl = $document['pdf_path'] ? htmlspecialchars(buildDocumentFileUrl($document['pdf_path']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : null;
+                  $title = htmlspecialchars($document['title'] ?? 'Untitled', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $description = htmlspecialchars(buildDocumentExcerpt($document['description'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $createdAtText = '';
+                  if (!empty($document['created_at'])) {
+                      $createdAtText = htmlspecialchars(formatDocumentDate($document['created_at']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  }
+                ?>
+                <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
                   <div>
                     <div class="fw-semibold">
-                      <?php echo htmlspecialchars($document['title'] ?? 'Untitled'); ?>
+                      <?= $title ?>
                     </div>
+                    <?php if ($createdAtText): ?>
+                      <p class="text-muted small mb-1">
+                        <?= $createdAtText ?>
+                      </p>
+                    <?php endif; ?>
                     <p class="text-muted small mb-0">
-                      <?php echo htmlspecialchars($document['description'] ?? 'No description.'); ?>
+                      <?= $description ?>
                     </p>
                   </div>
-                  <div>
-                    <?php if (!empty($document['file_path'])): ?>
-                      <a href="<?php echo htmlspecialchars($document['file_path']); ?>" class="btn btn-primary btn-sm" target="_blank">Preview</a>
+                  <div class="text-md-end">
+                   
+                    <?php if ($pdfUrl): ?>
+                      <a href="<?= $pdfUrl ?>" class="btn btn-outline-secondary btn-sm ms-md-2 mt-2 mt-md-0" target="_blank" rel="noopener">Download PDF</a>
                     <?php endif; ?>
                   </div>
                 </div>
@@ -177,23 +195,39 @@ $announcements = [
         </div>
 
         <!-- Public Hearings -->
-        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInRight">
+        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInRight" id="public-hearings">
           <h6 class="fw-bold mb-1">Public Hearings</h6>
           <div class="list-group shadow-sm small">
             <?php if (!empty($publicHearings)): ?>
               <?php foreach ($publicHearings as $hearing): ?>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
+                <?php
+                  $detailUrl = htmlspecialchars(buildDocumentUrl('public_hearings', $hearing), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $pdfUrl = $hearing['pdf_path'] ? htmlspecialchars(buildDocumentFileUrl($hearing['pdf_path']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : null;
+                  $title = htmlspecialchars($hearing['title'] ?? 'Untitled', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $description = htmlspecialchars(buildDocumentExcerpt($hearing['description'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $createdAtText = '';
+                  if (!empty($hearing['created_at'])) {
+                      $createdAtText = htmlspecialchars(formatDocumentDate($hearing['created_at']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  }
+                ?>
+                <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
                   <div>
                     <div class="fw-semibold">
-                      <?php echo htmlspecialchars($hearing['title'] ?? 'Untitled'); ?>
+                      <?= $title ?>
                     </div>
+                    <?php if ($createdAtText): ?>
+                      <p class="text-muted small mb-1">
+                        <?= $createdAtText ?>
+                      </p>
+                    <?php endif; ?>
                     <p class="text-muted small mb-0">
-                      <?php echo htmlspecialchars($hearing['description'] ?? 'No description.'); ?>
+                      <?= $description ?>
                     </p>
                   </div>
-                  <div>
-                    <?php if (!empty($hearing['file_path'])): ?>
-                      <a href="<?php echo htmlspecialchars($hearing['file_path']); ?>" class="btn btn-outline-primary btn-sm" target="_blank">Preview</a>
+                  <div class="text-md-end">
+                   
+                    <?php if ($pdfUrl): ?>
+                      <a href="<?= $pdfUrl ?>" class="btn btn-outline-secondary btn-sm ms-md-2 mt-2 mt-md-0" target="_blank" rel="noopener">Download PDF</a>
                     <?php endif; ?>
                   </div>
                 </div>
@@ -205,23 +239,39 @@ $announcements = [
         </div>
 
         <!-- Ordinances -->
-        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInLeft">
+        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInLeft" id="ordinances">
           <h6 class="fw-bold mb-1">Recent Ordinances</h6>
           <div class="list-group shadow-sm small">
             <?php if (!empty($recentOrdinances)): ?>
               <?php foreach ($recentOrdinances as $ordinance): ?>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
+                <?php
+                  $detailUrl = htmlspecialchars(buildDocumentUrl('ordinances', $ordinance), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $pdfUrl = $ordinance['pdf_path'] ? htmlspecialchars(buildDocumentFileUrl($ordinance['pdf_path']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : null;
+                  $title = htmlspecialchars($ordinance['title'] ?? 'Untitled', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $description = htmlspecialchars(buildDocumentExcerpt($ordinance['description'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $createdAtText = '';
+                  if (!empty($ordinance['created_at'])) {
+                      $createdAtText = htmlspecialchars(formatDocumentDate($ordinance['created_at']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  }
+                ?>
+                <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
                   <div>
                     <div class="fw-semibold">
-                      <?php echo htmlspecialchars($ordinance['title'] ?? 'Untitled'); ?>
+                      <?= $title ?>
                     </div>
+                    <?php if ($createdAtText): ?>
+                      <p class="text-muted small mb-1">
+                        <?= $createdAtText ?>
+                      </p>
+                    <?php endif; ?>
                     <p class="text-muted small mb-0">
-                      <?php echo htmlspecialchars($ordinance['description'] ?? 'No description.'); ?>
+                      <?= $description ?>
                     </p>
                   </div>
-                  <div>
-                    <?php if (!empty($ordinance['file_path'])): ?>
-                      <a href="<?php echo htmlspecialchars($ordinance['file_path']); ?>" class="btn btn-primary btn-sm" target="_blank">Preview</a>
+                  <div class="text-md-end">
+                   
+                    <?php if ($pdfUrl): ?>
+                      <a href="<?= $pdfUrl ?>" class="btn btn-outline-secondary btn-sm ms-md-2 mt-2 mt-md-0" target="_blank" rel="noopener">Download PDF</a>
                     <?php endif; ?>
                   </div>
                 </div>
@@ -233,23 +283,39 @@ $announcements = [
         </div>
 
         <!-- Resolutions -->
-        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInRight">
+        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInRight" id="resolutions">
           <h6 class="fw-bold mb-1">Resolutions</h6>
           <div class="list-group shadow-sm small">
             <?php if (!empty($resolutions)): ?>
               <?php foreach ($resolutions as $resolution): ?>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
+                <?php
+                  $detailUrl = htmlspecialchars(buildDocumentUrl('resolutions', $resolution), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $pdfUrl = $resolution['pdf_path'] ? htmlspecialchars(buildDocumentFileUrl($resolution['pdf_path']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : null;
+                  $title = htmlspecialchars($resolution['title'] ?? 'Untitled', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $description = htmlspecialchars(buildDocumentExcerpt($resolution['description'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $createdAtText = '';
+                  if (!empty($resolution['created_at'])) {
+                      $createdAtText = htmlspecialchars(formatDocumentDate($resolution['created_at']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  }
+                ?>
+                <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
                   <div>
                     <div class="fw-semibold">
-                      <?php echo htmlspecialchars($resolution['title'] ?? 'Untitled'); ?>
+                      <?= $title ?>
                     </div>
+                    <?php if ($createdAtText): ?>
+                      <p class="text-muted small mb-1">
+                        <?= $createdAtText ?>
+                      </p>
+                    <?php endif; ?>
                     <p class="text-muted small mb-0">
-                      <?php echo htmlspecialchars($resolution['description'] ?? 'No description.'); ?>
+                      <?= $description ?>
                     </p>
                   </div>
-                  <div>
-                    <?php if (!empty($resolution['file_path'])): ?>
-                      <a href="<?php echo htmlspecialchars($resolution['file_path']); ?>" class="btn btn-outline-primary btn-sm" target="_blank">Preview</a>
+                  <div class="text-md-end">
+                   
+                    <?php if ($pdfUrl): ?>
+                      <a href="<?= $pdfUrl ?>" class="btn btn-outline-secondary btn-sm ms-md-2 mt-2 mt-md-0" target="_blank" rel="noopener">Download PDF</a>
                     <?php endif; ?>
                   </div>
                 </div>
@@ -281,15 +347,40 @@ $announcements = [
         </div>
 
         <!-- Announcements -->
-        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInUp">
+        <div class="mb-3 animate-on-scroll" data-animate="animate__fadeInUp" id="announcements">
           <h6 class="fw-bold mb-2">Announcements</h6>
           <div class="list-group shadow-sm small">
-            <?php foreach ($announcements as $announcement): ?>
-              <div class="list-group-item border-start border-4 border-warning">
-                <div class="fw-semibold text-warning mb-1"><?php echo htmlspecialchars($announcement['title']); ?></div>
-                <p class="text-muted small mb-0"><?php echo htmlspecialchars($announcement['description']); ?></p>
-              </div>
-            <?php endforeach; ?>
+            <?php if (!empty($announcements)): ?>
+              <?php foreach ($announcements as $announcement): ?>
+                <?php
+                  $detailUrl = htmlspecialchars(buildDocumentUrl('announcements', $announcement), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $pdfUrl = $announcement['pdf_path'] ? htmlspecialchars(buildDocumentFileUrl($announcement['pdf_path']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : null;
+                  $title = htmlspecialchars($announcement['title'] ?? 'Untitled', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $description = htmlspecialchars(buildDocumentExcerpt($announcement['description'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  $createdAtText = '';
+                  if (!empty($announcement['created_at'])) {
+                      $createdAtText = htmlspecialchars(formatDocumentDate($announcement['created_at']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                  }
+                ?>
+                <div class="list-group-item border-start border-4 border-warning d-flex flex-column gap-2">
+                  <div>
+                    <div class="fw-semibold text-warning mb-1"><?= $title ?></div>
+                    <?php if ($createdAtText): ?>
+                      <div class="text-muted small mb-1">Published <?= $createdAtText ?></div>
+                    <?php endif; ?>
+                    <p class="text-muted small mb-0"><?= $description ?></p>
+                  </div>
+                  <div>
+                    <a href="<?= $detailUrl ?>" class="btn btn-warning btn-sm text-white">Read more</a>
+                    <?php if ($pdfUrl): ?>
+                      <a href="<?= $pdfUrl ?>" class="btn btn-outline-secondary btn-sm ms-2" target="_blank" rel="noopener">Download PDF</a>
+                    <?php endif; ?>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <div class="list-group-item text-muted">No announcements available.</div>
+            <?php endif; ?>
           </div>
         </div>
 
@@ -309,111 +400,91 @@ $announcements = [
 
 
 
-
-    <!--News Projects-->
+<!-- Projects-->
     <section class="projects-section bg-light" id="projects">
       <div class="container px-4 px-lg-5">
-        <h2 class="mx-auto mt-2 mb-5">News and Updates</h2>
-        <!-- Featured News Row-->
-        <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
-          <div class="col-xl-8 col-lg-7">
-            <img
-              class="img-fluid mb-3 mb-lg-0"
-              src="assets/img/news1.png"
-              alt="Mangrove Planting"
-            />
-          </div>
-          <div class="col-xl-4 col-lg-5">
-            <div class="featured-text text-center text-lg-left">
-              <h4>𝐌𝐀𝐍𝐆𝐑𝐎𝐕𝐄 𝐓𝐑𝐄𝐄 𝐏𝐋𝐀𝐍𝐓𝐈𝐍𝐆 𝐀𝐂𝐓𝐈𝐕𝐈𝐓𝐘</h4>
-              <p class="text-black-50 mb-0">
-                Isinagawa po natin ngayong umaga ang Mangrove Tree Planting
-                Activity sa Bagasbas Beach katuwang ang Municipal Agriculture
-                Office, Philippine Coast Guard, Municipal Rural Improvement Club
-                (MRIC) at BAEW, bilang isang mahalagang hakbang para sa
-                pangangalaga ng ating kapaligiran at kalikasan. Ang pagtatanim
-                po ng bakawan ay napakahalaga sapagkat ito ay nagsisilbing
-                depensa laban sa malalakas na alon at storm surge. ng inisyatibo
-                ay nagsisilbing inspirasyon sa ating lahat upang maging mas
-                responsable sa pangangalaga ng kalikasan para sa kasalukuyan at
-                sa mga susunod na henerasyon.
-              </p>
-
-               <a href="full-article.php" class="text-primary">See more...</a>
-            </div>
-          </div>
+        <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between mb-4">
+          <h2 class="mx-auto mx-lg-0 mt-2 mb-3 mb-lg-0">News and Updates</h2>
+          <a class="btn btn-outline-primary" href="news_update.php">View all news</a>
         </div>
-        <!-- News One Row-->
-        <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
-          <div class="col-lg-6">
-            <img class="img-fluid" src="assets/img/news2.JPG" alt="..." />
-          </div>
-          <div class="col-lg-6">
-            <div class="bg-black text-center h-100 project">
-              <div class="d-flex h-100">
-                <div
-                  class="project-text w-100 my-auto text-center text-lg-left"
-                >
-                  <h4 class="text-white">
-                    𝐃𝐢𝐬𝐭𝐫𝐢𝐛𝐮𝐭𝐢𝐨𝐧 𝐨𝐟 𝐂𝐨𝐦𝐩𝐥𝐞𝐭𝐞 𝐅𝐞𝐫𝐭𝐢𝐥𝐢𝐳𝐞𝐫 𝐚𝐧𝐝 𝐔𝐫𝐞𝐚
-                  </h4>
-                  <p class="mb-0 text-white-50">
-                    Bilang bahagi ng patuloy na suporta sa sektor ng
-                    agrikultura, isinagawa ng Lokal na Pamahalaan ng Daet ang
-                    unang pamamahagi ng kabuuang (900) fertilizers at urea sa
-                    ating mga magsasaka. Ang mga beneficiaries ngayong araw ay
-                    mula sa Brgy. Alawihao at Lag-on. Layunin ng programang ito
-                    na mapabuti ang ani, mapataas ang kita, at matiyak ang sapat
-                    na suplay ng pagkain para sa komunidad. Katuwang ang
-                    Municipal Agriculture Office, patuloy na magsasagawa ng mga
-                    ganitong inisyatiba ang LGU upang matulungan ang ating mga
-                    magsasaka.
-                  </p>
-
-                <a href="full-article.php" class="text-primary"
-                    >See more...</a
-                  >
+        <?php if ($featuredNews): ?>
+          <?php
+            $featuredUrl = buildNewsUrl($featuredNews);
+            $featuredTitle = htmlspecialchars($featuredNews['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $featuredExcerpt = htmlspecialchars(buildNewsExcerpt($featuredNews['content'], 260), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $featuredDate = htmlspecialchars(formatNewsDate($featuredNews['created_at']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+          ?>
+          <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
+            <div class="col-xl-8 col-lg-7">
+              
+              
+              <?php if (!empty($featuredNews['image_path'])): ?>
+                
+                <img class="img-fluid mb-3 mb-lg-0 w-100 rounded shadow-sm" src="<?= buildDocumentFileUrl($featuredNews['image_path']); ?>"  alt="<?= $featuredTitle ?>">
+              <?php else: ?>
+                <div class="bg-secondary-subtle rounded mb-3 mb-lg-0 w-100 d-flex align-items-center justify-content-center" style="min-height: 320px;">
+                  <span class="text-muted">No image available</span>
                 </div>
+              <?php endif; ?>
+            </div>
+            <div class="col-xl-4 col-lg-5">
+              <div class="featured-text text-center text-lg-left">
+                <h4><?= $featuredTitle ?></h4>
+                <p class="text-black-50 mb-2"><?= $featuredDate ?></p>
+                <p class="text-black-50 mb-0"><?= $featuredExcerpt ?></p>
+                <a href="<?= htmlspecialchars($featuredUrl, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="text-primary fw-semibold d-inline-flex align-items-center gap-2 mt-3">
+                  Read more
+                  <i class="bi bi-arrow-right"></i>
+                </a>
               </div>
             </div>
           </div>
-        </div>
-        <!-- News Two Row-->
-        <div class="row gx-0 justify-content-center">
-          <div class="col-lg-6">
-            <img class="img-fluid" src="assets/img/news3.JPG" alt="..." />
-          </div>
-          <div class="col-lg-6 order-lg-first">
-            <div class="bg-black text-center h-100 project">
-              <div class="d-flex h-100">
-                <div
-                  class="project-text w-100 my-auto text-center text-lg-right"
-                >
-                  <h4 class="text-white">
-                    𝟏𝟐𝟓𝐓𝐇 𝐏𝐇𝐈𝐋𝐈𝐏𝐏𝐈𝐍𝐄 𝐂𝐈𝐕𝐈𝐋 𝐒𝐄𝐑𝐕𝐈𝐂𝐄 𝐀𝐍𝐍𝐈𝐕𝐄𝐑𝐒𝐀𝐑𝐘 𝐎𝐏𝐄𝐍𝐈𝐍𝐆 𝐏𝐀𝐑𝐀𝐃𝐄
-                  </h4>
-                  <p class="mb-0 text-white-50">
-                    Opisyal pong binuksan kahapon ang pagdiriwang ng Ika-125
-                    Anibersaryo ng Philippine Civil Service na may temang “Bawat
-                    Kawani, Lingkod Bayani: Puso, Dangal at Galing para sa
-                    Bayan.” Layunin ng temang ito na kilalanin at ipagdiwang ang
-                    dedikasyon at propesyonalismo ng mga lingkod-bayan. Kasama
-                    rin po natin sa aktibidad na ito sina Acting Governor Joseph
-                    Ascutia at Provincial Administator Don Padilla at iba’t-
-                    ibang sektor ng pamahalaan at mga kapwa natin lingkod bayan.
-                  </p>
+        <?php else: ?>
+          <p class="text-muted">No news articles have been published yet.</p>
+        <?php endif; ?>
+<?php if ($secondaryNews): ?>
+  <?php foreach ($secondaryNews as $index => $news): ?>
+    <?php
+      $newsUrl = buildNewsUrl($news);
+      $newsTitle = htmlspecialchars($news['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+      $newsExcerpt = htmlspecialchars(buildNewsExcerpt($news['content']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+      $newsImage = !empty($news['image_path']) 
+          ? htmlspecialchars($news['image_path'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') 
+          : 'assets/img/default.jpg';
 
-        <a href="full-article.php" class="text-primary"
-                    >See more...</a
-                  >
-                </div>
-              </div>
+      // alternate classes
+      $rowClass   = ($index % 2 === 0) ? 'row gx-0 mb-5 mb-lg-0 justify-content-center' : 'row gx-0 justify-content-center';
+      $textAlign  = ($index % 2 === 0) ? 'text-lg-left' : 'text-lg-right';
+      $orderClass = ($index % 2 === 0) ? '' : ' order-lg-first';
+    ?>
+    <div class="<?= $rowClass ?>">
+      <!-- Image column -->
+      <div class="col-lg-6">
+        <img class="img-fluid" src="<?= buildDocumentFileUrl($news['image_path']); ?>" alt="<?= $newsTitle ?>" />
+      </div>
+
+      <!-- Text column -->
+      <div class="col-lg-6<?= $orderClass ?>">
+        <div class="bg-black text-center h-100 project">
+          <div class="d-flex h-100">
+            <div class="project-text w-100 my-auto text-center <?= $textAlign ?>">
+              <h4 class="text-white"><?= $newsTitle ?></h4>
+              <p class="mb-0 text-white-50"><?= $newsExcerpt ?></p>
+              <a href="<?= htmlspecialchars($newsUrl, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="text-primary">
+                See more...
+              </a>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
 
+
+
+      </div>
+    </section>
    <!-- OPPORTUNITIES SECTION -->
     <section
       class="opportunities-section d-flex flex-column justify-content-center align-items-center text-center"
