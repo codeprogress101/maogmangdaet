@@ -136,7 +136,9 @@ function buildNewsDetailUrl(array $article): string
         return '#';
     }
 
-    if ($slug === '') {
+     $seoEnabled = defined('USE_SEO_NEWS_ROUTES') && USE_SEO_NEWS_ROUTES === true;
+
+    if (!$seoEnabled || $slug === '') {
         return sprintf('newsdetail.php?id=%d', $id);
     }
 
