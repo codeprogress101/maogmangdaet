@@ -643,7 +643,7 @@ function list_news(PDO $pdo): array
 }
 
 
-**
+/**
  * Retrieve all submitted contact messages ordered from newest to oldest.
  */
 function list_contact_messages(PDO $pdo): array

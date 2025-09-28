@@ -55,34 +55,44 @@ $currentFile = basename($_SERVER['PHP_SELF']); // detect current page
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.php">
-            <img src="../assets/img/lgu logo.png" alt="LGU Logo" class="img-fluid">
-            <span>Maogmang Daet</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" 
-                aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+  <div class="container">
+    <!-- Brand -->
+    <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.php">
+      <img src="../assets/img/lgu logo.png" alt="LGU Logo" class="img-fluid" style="width:36px;height:36px;object-fit:contain;">
+      <span>Maogmang Daet</span>
+    </a>
 
-        <div class="collapse navbar-collapse" id="adminNavbar">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-1">
-                <li class="nav-item"><a class="nav-link <?= $currentFile==='dashboard.php'?'active':'' ?>" href="dashboard.php">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link <?= $currentFile==='executive.php'?'active':'' ?>" href="executive.php">Executive</a></li>
-                <li class="nav-item"><a class="nav-link <?= $currentFile==='hearings.php'?'active':'' ?>" href="hearings.php">Hearings</a></li>
-                <li class="nav-item"><a class="nav-link <?= $currentFile==='ordinances.php'?'active':'' ?>" href="ordinances.php">Ordinances</a></li>
-                <li class="nav-item"><a class="nav-link <?= $currentFile==='resolutions.php'?'active':'' ?>" href="resolutions.php">Resolutions</a></li>
-                <li class="nav-item"><a class="nav-link <?= $currentFile==='announcements.php'?'active':'' ?>" href="announcements.php">Announcements</a></li>
-                <li class="nav-item"><a class="nav-link <?= $currentFile==='news.php'?'active':'' ?>" href="news.php">News</a></li>
-                 <li class="nav-item"><a class="nav-link <?= $currentFile==='contact_messages.php'?'active':'' ?>" href="contact_messages.php">Contact Messages</a></li>
-                <?php if ($user): ?>
-                    <li class="nav-item small text-muted px-2">Hi, <?= e($user['email']) ?></li>
-                    <li class="nav-item">
-                        <a class="btn btn-primary fw-semibold" href="logout.php">Logout</a>
-                    </li>
-                <?php endif; ?>
+    <!-- Toggler -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" 
+            aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar links -->
+    <div class="collapse navbar-collapse" id="adminNavbar">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-1">
+        <li class="nav-item"><a class="nav-link <?= $currentFile==='dashboard.php'?'active':'' ?>" href="dashboard.php">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link <?= $currentFile==='executive.php'?'active':'' ?>" href="executive.php">Executive</a></li>
+        <li class="nav-item"><a class="nav-link <?= $currentFile==='hearings.php'?'active':'' ?>" href="hearings.php">Hearings</a></li>
+        <li class="nav-item"><a class="nav-link <?= $currentFile==='ordinances.php'?'active':'' ?>" href="ordinances.php">Ordinances</a></li>
+        <li class="nav-item"><a class="nav-link <?= $currentFile==='resolutions.php'?'active':'' ?>" href="resolutions.php">Resolutions</a></li>
+        <li class="nav-item"><a class="nav-link <?= $currentFile==='announcements.php'?'active':'' ?>" href="announcements.php">Announcements</a></li>
+        <li class="nav-item"><a class="nav-link <?= $currentFile==='news.php'?'active':'' ?>" href="news.php">News</a></li>
+        <li class="nav-item"><a class="nav-link <?= $currentFile==='contact_messages.php'?'active':'' ?>" href="contact_messages.php">Messages</a></li>
+
+        <?php if ($user): ?>
+          <!-- User Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle fw-semibold" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <?= e($user['email']) ?>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
             </ul>
-        </div>
+          </li>
+        <?php endif; ?>
+      </ul>
     </div>
+  </div>
 </nav>
 <main class="container mt-5 pt-5">

@@ -64,6 +64,39 @@ $page_head_includes = <<<HTML
       border-color: var(--services-primary);
       box-shadow: 0 1.5rem 2.5rem rgba(253, 126, 20, 0.18);
     }
+.service-accordion .accordion-item {
+      border-radius: 1rem;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      margin-bottom: 1rem;
+      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.05);
+    }
+
+    .service-accordion .accordion-button {
+      font-weight: 600;
+      gap: 0.75rem;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .service-accordion .accordion-button:not(.collapsed) {
+      color: #fff;
+      background-color: var(--services-primary);
+      box-shadow: none;
+    }
+
+    .service-accordion .accordion-button:focus {
+      box-shadow: none;
+      border-color: rgba(253, 126, 20, 0.25);
+    }
+
+    .service-accordion .accordion-body {
+      padding: 1.5rem;
+      background-color: #fffdf9;
+    }
+
+    .service-accordion .list-icon {
+      color: var(--services-primary);
+    }
 
     .service-icon {
       width: 70px;
@@ -250,8 +283,8 @@ include 'header.php';
               <i class="bi bi-briefcase-fill"></i>
             </div>
             <h5 class="fw-semibold mb-3">Business Permits &amp; Licensing</h5>
-            <p class="text-muted">Streamlined processes for new and existing enterprises, from registrations to renewals.</p>
-            <a href="#" class="btn btn-primary mt-3">Learn More</a>
+            <p class="text-muted">Coming Soon.</p>
+            <a href="#" class="btn btn-primary mt-3 disabled" tabindex="-1" aria-disabled="true">Coming Soon</a>
           </div>
         </div>
       </div>
@@ -323,7 +356,7 @@ include 'header.php';
             </div>
             <h5 class="fw-semibold mb-3">Social Services &amp; Welfare</h5>
             <p class="text-muted">Assistance for vulnerable sectors, from livelihood kits to protective services.</p>
-            <a href="#" class="btn btn-primary mt-3">Learn More</a>
+             <a href="#service-requirements" class="btn btn-primary mt-3">View Requirements</a>
           </div>
         </div>
       </div>
@@ -360,6 +393,156 @@ include 'header.php';
             <h5 class="fw-semibold mb-3">Tourism &amp; Cultural Affairs</h5>
             <p class="text-muted">Events, promotions, and heritage conservation to celebrate Daet's vibrant culture.</p>
             <a href="#" class="btn btn-primary mt-3">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICE REQUIREMENTS SECTION -->
+<section id="service-requirements" class="py-5" style="background-color: #fff7f0;">
+  <div class="container px-4 px-lg-5">
+    <div class="text-center mb-5">
+      <span class="badge rounded-pill px-3 py-2 text-uppercase" style="background-color: rgba(253, 126, 20, 0.1); color: var(--services-primary);">Service Requirements</span>
+      <h2 class="section-title fw-bold mt-3">Guides for Assistance and Support</h2>
+      <p class="text-muted mb-0">Review the documentary requirements for our social services programs to help you prepare ahead of your visit.</p>
+    </div>
+    <div class="service-accordion">
+      <div class="accordion" id="servicesAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingBusiness">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBusiness" aria-expanded="false" aria-controls="collapseBusiness">
+              <i class="bi bi-briefcase-fill"></i>
+              <span>Business Permit &amp; Licensing</span>
+            </button>
+          </h2>
+          <div id="collapseBusiness" class="accordion-collapse collapse" aria-labelledby="headingBusiness" data-bs-parent="#servicesAccordion">
+            <div class="accordion-body">
+              <p class="mb-0 text-muted">Coming Soon.</p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingSoloParent">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSoloParent" aria-expanded="false" aria-controls="collapseSoloParent">
+              <i class="bi bi-person-heart"></i>
+              <span>Requirements for Livelihood Assistance for Solo Parent</span>
+            </button>
+          </h2>
+          <div id="collapseSoloParent" class="accordion-collapse collapse" aria-labelledby="headingSoloParent" data-bs-parent="#servicesAccordion">
+            <div class="accordion-body">
+              <ul class="list-unstyled mb-0">
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Updated Solo Parent ID (Xerox Copy)</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Sulat Kahilingan – Address to Mayor</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Project Proposal</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Voter’s Certification (COMELEC)</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Simplified Action Plan Form (DAET NEGOSYO CENTER)</li>
+                <li class="mb-0"><i class="bi bi-check-circle-fill list-icon me-2"></i>Picture</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingSeniorCitizen">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeniorCitizen" aria-expanded="false" aria-controls="collapseSeniorCitizen">
+              <i class="bi bi-people-fill"></i>
+              <span>Requirements for Deceased Indigent Senior Citizen</span>
+            </button>
+          </h2>
+          <div id="collapseSeniorCitizen" class="accordion-collapse collapse" aria-labelledby="headingSeniorCitizen" data-bs-parent="#servicesAccordion">
+            <div class="accordion-body">
+              <ul class="list-unstyled mb-0">
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Certified Xerox Copy of Death Certificate</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Certified Xerox Copy of OSCA ID</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Xerox Copy ID of Claimant</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>SB Resolution 074-2014</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Barangay Certificate of Indigency</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Voter’s Certification</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Certificate of Indigency – MSWDO</li>
+                <li class="mb-0"><i class="bi bi-check-circle-fill list-icon me-2"></i>CE-MSWDO (For Interview)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingLivelihood">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLivelihood" aria-expanded="false" aria-controls="collapseLivelihood">
+              <i class="bi bi-cash-coin"></i>
+              <span>Requirements for Livelihood Assistance</span>
+            </button>
+          </h2>
+          <div id="collapseLivelihood" class="accordion-collapse collapse" aria-labelledby="headingLivelihood" data-bs-parent="#servicesAccordion">
+            <div class="accordion-body">
+              <ul class="list-unstyled mb-0">
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Sulat Kahilingan – Address to Mayor</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Project Proposal</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Voter’s Certification (COMELEC)</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill list-icon me-2"></i>Simplified Action Plan Form (DAET NEGOSYO CENTER)</li>
+                <li class="mb-0"><i class="bi bi-check-circle-fill list-icon me-2"></i>Picture</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingBurial">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBurial" aria-expanded="false" aria-controls="collapseBurial">
+              <i class="bi bi-emoji-tear"></i>
+              <span>Requirements for Burial Assistance</span>
+            </button>
+          </h2>
+          <div id="collapseBurial" class="accordion-collapse collapse" aria-labelledby="headingBurial" data-bs-parent="#servicesAccordion">
+            <div class="accordion-body">
+              <ol class="mb-0 ps-3">
+                <li class="mb-2">Barangay Certificate of Indigency (original copy)
+                  <p class="mb-2 small text-muted">Note: Indicate the name and relationship of the claimant to the deceased</p>
+                </li>
+                <li class="mb-2">Voter’s Certification (original copy)</li>
+                <li class="mb-0">Death Certificate (certified Xerox copy)</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingMedicalOfficials">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMedicalOfficials" aria-expanded="false" aria-controls="collapseMedicalOfficials">
+              <i class="bi bi-hospital"></i>
+              <span>Requirements for Medical Assistance (Barangay Elected/Appointed Officials)</span>
+            </button>
+          </h2>
+          <div id="collapseMedicalOfficials" class="accordion-collapse collapse" aria-labelledby="headingMedicalOfficials" data-bs-parent="#servicesAccordion">
+            <div class="accordion-body">
+              <ol class="mb-0 ps-3">
+                <li class="mb-2">Medical Certificate (original copy)</li>
+                <li class="mb-2">Reseta (photocopy)</li>
+                <li class="mb-2">Certificate of No Available Medicine (issued by RHU)</li>
+                <li class="mb-2">Appointment for Appointed Officials / Oath of Office for Elected Officials</li>
+                <li class="mb-2">Liga Certification</li>
+                <li class="mb-0">SB Resolution</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingMedicalGeneral">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMedicalGeneral" aria-expanded="false" aria-controls="collapseMedicalGeneral">
+              <i class="bi bi-heart-pulse-fill"></i>
+              <span>Requirements for Medical Assistance (General/Public)</span>
+            </button>
+          </h2>
+          <div id="collapseMedicalGeneral" class="accordion-collapse collapse" aria-labelledby="headingMedicalGeneral" data-bs-parent="#servicesAccordion">
+            <div class="accordion-body">
+              <ol class="mb-0 ps-3">
+                <li class="mb-2">Medical Certificate (original copy)</li>
+                <li class="mb-2">Reseta / Laboratory Request (Xerox copy)</li>
+                <li class="mb-2">Certification from RHU that medicine/laboratory request is not available (original copy)</li>
+                <li class="mb-2">Voter’s Certification (original copy) of claimant</li>
+                <li class="mb-2">Barangay Certificate of Indigency of Claimant (original copy)
+                  <p class="mb-2 small text-muted">Note: Indicate the name and relationship of the claimant to the patient</p>
+                </li>
+                <li class="mb-0">Interview at MSWDO</li>
+              </ol>
+            </div>
           </div>
         </div>
       </div>
