@@ -74,6 +74,7 @@ $currentFile = basename($_SERVER['PHP_SELF']); // detect current page
                 <li class="nav-item"><a class="nav-link <?= $currentFile==='resolutions.php'?'active':'' ?>" href="resolutions.php">Resolutions</a></li>
                 <li class="nav-item"><a class="nav-link <?= $currentFile==='announcements.php'?'active':'' ?>" href="announcements.php">Announcements</a></li>
                 <li class="nav-item"><a class="nav-link <?= $currentFile==='news.php'?'active':'' ?>" href="news.php">News</a></li>
+                 <li class="nav-item"><a class="nav-link <?= $currentFile==='contact_messages.php'?'active':'' ?>" href="contact_messages.php">Contact Messages</a></li>
                 <?php if ($user): ?>
                     <li class="nav-item small text-muted px-2">Hi, <?= e($user['email']) ?></li>
                     <li class="nav-item">

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-labelledby="title desc">
+  <title id="title">Transparency Seal</title>
+  <desc id="desc">Stylised seal representing transparency for Philippine government portals.</desc>
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#faca2a" />
+      <stop offset="100%" stop-color="#f28f16" />
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="url(#gradient)" stroke="#b05a0f" stroke-width="4" />
+  <circle cx="100" cy="100" r="70" fill="#fff" opacity="0.85" />
+  <path d="M100 40 L122 94 L180 94 L133 128 L150 184 L100 150 L50 184 L67 128 L20 94 L78 94 Z" fill="#b05a0f" opacity="0.75" />
+  <text x="100" y="110" font-family="'Nunito', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#2c2c2c">TRANSPARENCY</text>
+  <text x="100" y="135" font-family="'Nunito', Arial, sans-serif" font-size="14" text-anchor="middle" fill="#2c2c2c">SEAL</text>
+</svg>

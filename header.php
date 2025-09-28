@@ -114,6 +114,8 @@
                 About
               </a>
             </li>
+            
+
             <li class="nav-item">
               <a
                 class="nav-link<?php echo $activePage === 'government' ? ' active' : ''; ?>"
@@ -129,7 +131,7 @@
                 <?php echo $activePage === 'news' ? 'aria-current="page"' : ''; ?>
                 href="news_update.php"
               >
-                News &amp; Updates
+                News
               </a>
             </li>
             <li class="nav-item">
