@@ -96,11 +96,16 @@ $items = $stmt->fetchAll();
 
 include __DIR__ . '/partials/header.php';
 ?>
+<header class="mb-4">
+    <h1 class="h2 fw-bold text-dark"><?= e($pageTitle) ?></h1>
+    <p class="text-muted">Manage <?= e(strtolower($pageTitle)) ?> content displayed on the public website.</p>
+</header>
+
 <div class="row g-4">
     <div class="col-lg-7">
-        <div class="card shadow-sm h-100">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h2 class="h5 mb-0">Existing Records</h2>
+        <div class="card shadow-sm border-0 rounded-4 h-100">
+            <div class="card-header bg-white d-flex flex-wrap gap-2 justify-content-between align-items-center border-0 py-3">
+                <h2 class="h5 mb-0 fw-semibold">Existing Records</h2>
                 <a class="btn btn-sm btn-primary" href="<?= e(basename($_SERVER['PHP_SELF'])) ?>">Add New</a>
             </div>
             <div class="card-body p-0">
@@ -149,44 +154,47 @@ include __DIR__ . '/partials/header.php';
         </div>
     </div>
     <div class="col-lg-5">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white">
-                <h2 class="h5 mb-0"><?= $editingItem ? 'Edit Record' : 'Add New Record' ?></h2>
+       <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-white border-0 py-3">
+                <h2 class="h5 mb-0 fw-semibold"><?= $editingItem ? 'Edit Record' : 'Add New Record' ?></h2>
             </div>
             <div class="card-body">
                 <?php if ($errors): ?>
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger rounded-3">
                         <?php foreach ($errors as $error): ?>
                             <div><?= e($error) ?></div>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
                 <?php if ($success): ?>
-                    <div class="alert alert-success"><?= e($success) ?></div>
+                   <div class="alert alert-success rounded-3"><?= e($success) ?></div>
                 <?php endif; ?>
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                     <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
                     <input type="hidden" name="action" value="save">
                     <?php if ($editingItem): ?>
                         <input type="hidden" name="id" value="<?= (int) $editingItem['id'] ?>">
                     <?php endif; ?>
                     <div class="mb-3">
-                        <label for="title" class="form-label">Title</label>
+                        <label for="title" class="form-label fw-semibold">Title</label>
                         <input type="text" class="form-control" id="title" name="title" required value="<?= e($editingItem['title'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label fw-semibold">Description</label>
                         <textarea class="form-control" id="description" name="description" rows="4" required><?= e($editingItem['description'] ?? '') ?></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label for="pdf" class="form-label">PDF Document</label>
+                    <div class="mb-4">
+                        <label for="pdf" class="form-label fw-semibold">PDF Document</label>
                         <input class="form-control" type="file" id="pdf" name="pdf" accept="application/pdf">
                         <div class="form-text">Upload a PDF file (optional). Existing files will be replaced.</div>
                         <?php if (!empty($editingItem['pdf_path'])): ?>
                             <div class="small mt-2">Current file: <a href="<?= e($editingItem['pdf_path']) ?>" target="_blank">View</a></div>
                         <?php endif; ?>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <a href="<?= e(basename($_SERVER['PHP_SELF'])) ?>" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
                 </form>
             </div>
         </div>
