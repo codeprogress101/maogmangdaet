@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/includes/database.php';
+
 $page_title = 'Municipal Services of Daet';
 $page_head_includes = <<<HTML
 <style>
@@ -128,6 +132,53 @@ $page_head_includes = <<<HTML
   </style>
 HTML;
 $activePage = 'services';
+$errors = [];
+$successMessage = '';
+$formValues = [
+    'name' => '',
+    'email' => '',
+    'message' => '',
+];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $formValues['name'] = trim((string) ($_POST['name'] ?? ''));
+    $formValues['email'] = trim((string) ($_POST['email'] ?? ''));
+    $formValues['message'] = trim((string) ($_POST['message'] ?? ''));
+
+    if ($formValues['name'] === '') {
+        $errors[] = 'Please provide your name.';
+    } elseif (mb_strlen($formValues['name'], 'UTF-8') > 150) {
+        $errors[] = 'Names must be 150 characters or less.';
+    }
+
+    if ($formValues['email'] === '') {
+        $errors[] = 'Please provide your email address.';
+    } elseif (!filter_var($formValues['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Enter a valid email address.';
+    } elseif (mb_strlen($formValues['email'], 'UTF-8') > 150) {
+        $errors[] = 'Email addresses must be 150 characters or less.';
+    }
+
+    if ($formValues['message'] === '') {
+        $errors[] = 'Please enter a message for the LGU team.';
+    } elseif (mb_strlen($formValues['message'], 'UTF-8') > 5000) {
+        $errors[] = 'Messages must be 5,000 characters or less.';
+    }
+
+    if (!$errors) {
+        try {
+            $saved = saveContactMessage($formValues['name'], $formValues['email'], $formValues['message']);
+            if ($saved) {
+                $successMessage = 'Thank you for contacting us. Your message has been sent successfully.';
+                $formValues = ['name' => '', 'email' => '', 'message' => ''];
+            } else {
+                $errors[] = 'We were unable to save your message. Please try again later.';
+            }
+        } catch (Throwable $exception) {
+            $errors[] = 'We encountered an unexpected error while sending your message. Please try again later.';
+        }
+    }
+}
 include 'header.php';
 ?>
 
@@ -326,6 +377,84 @@ include 'header.php';
       </div>
       <div class="col-lg-4 text-lg-end">
         <a href="mailto:info@lgudaet.gov.ph" class="btn btn-primary btn-lg px-4">Connect with Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5 bg-light" id="contact-us">
+  <div class="container px-4 px-lg-5">
+    <div class="row g-5 align-items-start">
+      <div class="col-lg-5">
+        <h2 class="section-title fw-bold mb-3">Contact Us</h2>
+        <p class="text-muted mb-4">
+          Share your questions, feedback, or service requests with the Municipal Government of Daet. Our support team will respond using the email address you provide.
+        </p>
+        <ul class="list-unstyled text-muted">
+          <li class="mb-2"><i class="bi bi-geo-alt-fill text-primary me-2"></i>Municipal Hall, Ninoy Aquino Ave., Daet, Camarines Norte</li>
+          <li class="mb-2"><i class="bi bi-telephone-fill text-primary me-2"></i>(054) 411-1111</li>
+          <li class="mb-0"><i class="bi bi-envelope-fill text-primary me-2"></i><a href="mailto:info@lgudaet.gov.ph" class="text-decoration-none">info@lgudaet.gov.ph</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-7">
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-4">
+            <h3 class="h5 fw-semibold mb-3">Send us a message</h3>
+            <?php if ($successMessage): ?>
+              <div class="alert alert-success" role="alert">
+                <?= htmlspecialchars($successMessage, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
+              </div>
+            <?php endif; ?>
+            <?php if ($errors): ?>
+              <div class="alert alert-danger" role="alert">
+                <ul class="mb-0 ps-3">
+                  <?php foreach ($errors as $error): ?>
+                    <li><?= htmlspecialchars($error, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></li>
+                  <?php endforeach; ?>
+                </ul>
+              </div>
+            <?php endif; ?>
+            <form method="post" novalidate>
+              <div class="mb-3">
+                <label for="contactName" class="form-label">Full Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="contactName"
+                  name="name"
+                  maxlength="150"
+                  required
+                  value="<?= htmlspecialchars($formValues['name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="contactEmail" class="form-label">Email Address</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="contactEmail"
+                  name="email"
+                  maxlength="150"
+                  required
+                  value="<?= htmlspecialchars($formValues['email'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="contactMessage" class="form-label">Message</label>
+                <textarea
+                  class="form-control"
+                  id="contactMessage"
+                  name="message"
+                  rows="5"
+                  maxlength="5000"
+                  required><?= htmlspecialchars($formValues['message'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></textarea>
+              </div>
+              <div class="d-grid d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-primary px-4">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   </div>

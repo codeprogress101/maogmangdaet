@@ -531,6 +531,51 @@ include 'header.php';
       </div>
     </section>
 
+
+<section class="py-5 bg-light" id="quick-links">
+  <div class="container px-4 px-lg-5">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold">Quick Links</h2>
+      <p class="text-muted mb-0">Access key citizen services and transparency resources in one tap.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-sm-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 text-primary"><i class="bi bi-people-fill fs-1"></i></div>
+            <h3 class="h5">Citizen's Charter</h3>
+            <p class="text-muted flex-grow-1">Review frontline service commitments and processing times mandated by the LGU.</p>
+            <a class="btn btn-outline-primary mt-3" href="citizens-charter.php">View Charter</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 text-primary"><i class="bi bi-shield-check fs-1"></i></div>
+            <h3 class="h5">Transparency Portal</h3>
+            <p class="text-muted flex-grow-1">Browse disclosure reports, budgets, and procurement updates for public accountability.</p>
+            <a class="btn btn-outline-primary mt-3" href="transparency.php">Go to Transparency</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3 text-primary"><i class="bi bi-chat-text fs-1"></i></div>
+            <h3 class="h5">Feedback Form</h3>
+            <p class="text-muted flex-grow-1">Send suggestions or report service gaps to help us improve municipal programs.</p>
+            <a class="btn btn-outline-primary mt-3" href="feedback.php">Send Feedback</a>
+          </div>
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+</section>
+
+
  <!-- Emergency Hotlines -->
     <section class="hotlines-section">
       <div class="container px-4 px-lg-5">

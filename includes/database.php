@@ -165,6 +165,21 @@ function formatNewsDatePublic(?string $date): string
     return $timestamp ? date('F j, Y', $timestamp) : '';
 }
 
+
+function saveContactMessage(string $name, string $email, string $message): bool
+{
+    $pdo = getDatabaseConnection();
+    $stmt = $pdo->prepare('INSERT INTO contact_messages (name, email, message, created_at) VALUES (:name, :email, :message, NOW())');
+
+    return $stmt->execute([
+        ':name' => $name,
+        ':email' => $email,
+        ':message' => $message,
+    ]);
+}
+
+
+
 function newsExcerpt(?string $content, int $length = 160): string
 {
     $plain = trim(preg_replace('/\s+/', ' ', strip_tags($content ?? '')) ?? '');

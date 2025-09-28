@@ -422,7 +422,7 @@ function generateSlug(string $title, PDO $conn, ?int $ignoreId = null, string $t
         throw new InvalidArgumentException('Unsupported table for slug generation.');
     }
 
-   $workingTitle = trim($title);
+    $workingTitle = trim($title);
     if ($workingTitle === '') {
         $slug = '';
     } else {
@@ -450,8 +450,8 @@ function generateSlug(string $title, PDO $conn, ?int $ignoreId = null, string $t
             }
         }
 
-        $slug = preg_replace('/[^\p{L}\p{Nd}]+/u', '-', $slug) ?? '';
-        $slug = trim($slug, '-');
+         $parts = preg_split('/[^\p{L}\p{Nd}]+/u', $slug, -1, PREG_SPLIT_NO_EMPTY);
+        $slug = $parts ? implode('-', $parts) : '';
     }
 
     if ($slug === '') {
@@ -641,6 +641,27 @@ function list_news(PDO $pdo): array
     $stmt = $pdo->query('SELECT * FROM news ORDER BY created_at DESC');
     return $stmt->fetchAll();
 }
+
+
+**
+ * Retrieve all submitted contact messages ordered from newest to oldest.
+ */
+function list_contact_messages(PDO $pdo): array
+{
+    $stmt = $pdo->query('SELECT id, name, email, message, created_at FROM contact_messages ORDER BY created_at DESC');
+
+    return $stmt->fetchAll();
+}
+
+/**
+ * Delete a contact message by id.
+ */
+function delete_contact_message(PDO $pdo, int $id): void
+{
+    $stmt = $pdo->prepare('DELETE FROM contact_messages WHERE id = :id');
+    $stmt->execute(['id' => $id]);
+}
+
 
 /**
  * Ensure incoming POST requests are protected by CSRF.

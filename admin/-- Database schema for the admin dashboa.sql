@@ -82,6 +82,14 @@ CREATE TABLE IF NOT EXISTS news (
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS contact_messages (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    message TEXT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 INSERT INTO users (email, password_hash, role, failed_attempts, locked_until, last_login_at, created_at)
 VALUES ('admin@example.com', '$argon2id$v=19$m=65536,t=4,p=1$efv2ob26vUTg0OHRfyvqoA$x5+0+D6hvvHIHO22VzfUrRoVaDtD/P4xi+hxm2krRqk', 'admin', 0, NULL, NULL, NOW())
 ON DUPLICATE KEY UPDATE email = VALUES(email);
