@@ -6,27 +6,6 @@ require_once __DIR__ . '/includes/database.php';
 $page_title = 'Maogmang Daet';
 $activePage = 'home';
 
-function buildNewsUrl(array $article): string
-{
-    return sprintf('/news/%d/%s', $article['id'], $article['slug']);
-}
-
-function buildNewsExcerpt(string $content, int $length = 180): string
-{
-    $plain = trim(preg_replace('/\s+/', ' ', strip_tags($content)) ?? '');
-
-    if (mb_strlen($plain) <= $length) {
-        return $plain;
-    }
-
-    return rtrim(mb_substr($plain, 0, $length - 3)) . '...';
-}
-
-function formatNewsDate(string $date): string
-{
-    return date('F j, Y', strtotime($date));
-}
-
 function documentRouteSegment(string $table): string
 {
   switch ($table) {
@@ -47,7 +26,9 @@ function documentRouteSegment(string $table): string
 
 function buildDocumentUrl(string $table, array $document): string
 {
-    return sprintf('/%s/%d/%s', documentRouteSegment($table), $document['id'], $document['slug']);
+    $slug = isset($document['slug']) ? rawurlencode((string) $document['slug']) : '';
+
+    return sprintf('/%s/%d/%s', documentRouteSegment($table), (int) $document['id'], $slug);
 }
 
 function buildDocumentExcerpt(string $description, int $length = 160): string
@@ -63,12 +44,7 @@ function buildDocumentExcerpt(string $description, int $length = 160): string
 
 function buildDocumentFileUrl(?string $path): ?string
 {
-    if (!$path) {
-        return null;
-    }
-
-    // remove the first "/" if it exists
-    return ltrim($path, '/');
+   return publicUploadPath($path);
 }
 
 function formatDocumentDate(string $date): string
@@ -409,18 +385,18 @@ include 'header.php';
         </div>
         <?php if ($featuredNews): ?>
           <?php
-            $featuredUrl = buildNewsUrl($featuredNews);
+            $featuredUrl = buildNewsDetailUrl($featuredNews);
             $featuredTitle = htmlspecialchars($featuredNews['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-            $featuredExcerpt = htmlspecialchars(buildNewsExcerpt($featuredNews['content'], 260), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-            $featuredDate = htmlspecialchars(formatNewsDate($featuredNews['created_at']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $featuredExcerpt = htmlspecialchars(newsExcerpt($featuredNews['content'], 260), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $featuredDate = htmlspecialchars(formatNewsDatePublic($featuredNews['created_at']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
           ?>
           <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
             <div class="col-xl-8 col-lg-7">
               
               
-              <?php if (!empty($featuredNews['image_path'])): ?>
-                
-                <img class="img-fluid mb-3 mb-lg-0 w-100 rounded shadow-sm" src="<?= buildDocumentFileUrl($featuredNews['image_path']); ?>"  alt="<?= $featuredTitle ?>">
+              <?php $featuredImagePath = publicUploadPath($featuredNews['image_path'] ?? null); ?>
+              <?php if ($featuredImagePath): ?>
+                <img class="img-fluid mb-3 mb-lg-0 w-100 rounded shadow-sm" src="<?= htmlspecialchars($featuredImagePath, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>"  alt="<?= $featuredTitle ?>">
               <?php else: ?>
                 <div class="bg-secondary-subtle rounded mb-3 mb-lg-0 w-100 d-flex align-items-center justify-content-center" style="min-height: 320px;">
                   <span class="text-muted">No image available</span>
@@ -445,12 +421,10 @@ include 'header.php';
 <?php if ($secondaryNews): ?>
   <?php foreach ($secondaryNews as $index => $news): ?>
     <?php
-      $newsUrl = buildNewsUrl($news);
+      $newsUrl = buildNewsDetailUrl($news);
       $newsTitle = htmlspecialchars($news['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-      $newsExcerpt = htmlspecialchars(buildNewsExcerpt($news['content']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-      $newsImage = !empty($news['image_path']) 
-          ? htmlspecialchars($news['image_path'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') 
-          : 'assets/img/default.jpg';
+      $newsExcerptText = htmlspecialchars(newsExcerpt($news['content']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+      $newsImagePath = publicUploadPath($news['image_path'] ?? null) ?: 'assets/img/default.jpg';
 
       // alternate classes
       $rowClass   = ($index % 2 === 0) ? 'row gx-0 mb-5 mb-lg-0 justify-content-center' : 'row gx-0 justify-content-center';
@@ -460,7 +434,7 @@ include 'header.php';
     <div class="<?= $rowClass ?>">
       <!-- Image column -->
       <div class="col-lg-6">
-        <img class="img-fluid" src="<?= buildDocumentFileUrl($news['image_path']); ?>" alt="<?= $newsTitle ?>" />
+        <img class="img-fluid" src="<?= htmlspecialchars($newsImagePath, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>" alt="<?= $newsTitle ?>" />
       </div>
 
       <!-- Text column -->
@@ -469,7 +443,7 @@ include 'header.php';
           <div class="d-flex h-100">
             <div class="project-text w-100 my-auto text-center <?= $textAlign ?>">
               <h4 class="text-white"><?= $newsTitle ?></h4>
-              <p class="mb-0 text-white-50"><?= $newsExcerpt ?></p>
+              <p class="mb-0 text-white-50"><?= $newsExcerptText ?></p>
               <a href="<?= htmlspecialchars($newsUrl, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="text-primary">
                 See more...
               </a>

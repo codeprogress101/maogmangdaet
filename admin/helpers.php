@@ -422,19 +422,45 @@ function generateSlug(string $title, PDO $conn, ?int $ignoreId = null, string $t
         throw new InvalidArgumentException('Unsupported table for slug generation.');
     }
 
-    $slug = mb_strtolower($title, 'UTF-8');
-    $transliterated = @iconv('UTF-8', 'ASCII//TRANSLIT', $slug);
-    if ($transliterated !== false) {
-        $slug = $transliterated;
+   $workingTitle = trim($title);
+    if ($workingTitle === '') {
+        $slug = '';
+    } else {
+        $workingTitle = preg_replace('/\s+/u', ' ', $workingTitle) ?? '';
+
+        if (class_exists('Transliterator')) {
+            /** @var Transliterator $transliterator */
+            $transliterator = Transliterator::create('Any-Latin; Latin-ASCII');
+            if ($transliterator instanceof Transliterator) {
+                $workingTitle = $transliterator->transliterate($workingTitle);
+            }
+        }
+
+        $slug = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $workingTitle);
+        if ($slug === false) {
+            $slug = $workingTitle;
+        }
+
+        $slug = mb_strtolower($slug, 'UTF-8');
+
+        if (class_exists('Normalizer')) {
+            $normalized = Normalizer::normalize($slug, Normalizer::FORM_D);
+            if ($normalized !== false) {
+                $slug = preg_replace('/\p{Mn}+/u', '', $normalized) ?? $slug;
+            }
+        }
+
+        $slug = preg_replace('/[^\p{L}\p{Nd}]+/u', '-', $slug) ?? '';
+        $slug = trim($slug, '-');
     }
 
-    $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug) ?? '';
-    $slug = preg_replace('/[\s-]+/', '-', $slug) ?? '';
-    $slug = trim($slug, '-');
-
     if ($slug === '') {
-        $fallback = preg_replace('/[^a-z0-9]+/', '-', $table) ?? 'item';
-        $slug = trim($fallback, '-') ?: 'item';
+        $fallback = preg_replace('/[^a-z0-9]+/i', '-', $table) ?? 'item';
+        $slug = trim(mb_strtolower($fallback, 'UTF-8'), '-') ?: 'item';
+    }
+
+    if (mb_strlen($slug, 'UTF-8') > 190) {
+        $slug = rtrim(mb_substr($slug, 0, 190, 'UTF-8'), '-');
     }
 
     $baseSlug = $slug;
@@ -453,17 +479,22 @@ function generateSlug(string $title, PDO $conn, ?int $ignoreId = null, string $t
 
         $stmt->execute($params);
         $exists = (int) $stmt->fetchColumn();
+        $stmt->closeCursor();
 
         if ($exists === 0) {
             break;
         }
 
         $slug = sprintf('%s-%d', $baseSlug, $suffix);
+        if (mb_strlen($slug, 'UTF-8') > 200) {
+            $slug = mb_substr($slug, 0, 200, 'UTF-8');
+        }
         $suffix++;
     }
 
     return $slug;
 }
+
 
 /**
  * Delete a previously uploaded news image from storage.
