@@ -1,0 +1,27 @@
+RewriteEngine On
+
+# SEO-friendly routes for news detail pages
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^news/([0-9]+)/([^/]+)/?$ newsdetail.php?id=$1&slug=$2 [L,QSA]
+
+# SEO-friendly routes for civic document detail pages
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^announcements/([0-9]+)/([^/]+)/?$ documentdetail.php?type=announcements&id=$1&slug=$2 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^executive-issuances/([0-9]+)/([^/]+)/?$ documentdetail.php?type=executive_issuances&id=$1&slug=$2 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ordinances/([0-9]+)/([^/]+)/?$ documentdetail.php?type=ordinances&id=$1&slug=$2 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^resolutions/([0-9]+)/([^/]+)/?$ documentdetail.php?type=resolutions&id=$1&slug=$2 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^public-hearings/([0-9]+)/([^/]+)/?$ documentdetail.php?type=public_hearings&id=$1&slug=$2 [L,QSA]

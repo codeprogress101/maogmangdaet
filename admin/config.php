@@ -17,3 +17,14 @@ const ACCOUNT_LOCK_DURATION = 15 * 60;       // 15 minutes lock duration.
 // File upload configuration.
 const UPLOAD_DIR = __DIR__ . '/uploads';
 const MAX_PDF_SIZE = 10 * 1024 * 1024; // 10 MB.
+
+
+// News specific upload configuration.
+const NEWS_UPLOAD_DIR = __DIR__ . '/uploads/news';
+const NEWS_IMAGE_PUBLIC_PATH = '/admin/uploads/news';
+const MAX_NEWS_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB size limit for news images.
+const NEWS_IMAGE_ALLOWED_TYPES = [
+    'image/jpeg' => 'jpg',
+    'image/png' => 'png',
+    'image/gif' => 'gif',
+];

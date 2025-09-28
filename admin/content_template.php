@@ -62,8 +62,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (!$errors) {
+            $slug = $existingItem && $title === ($existingItem['title'] ?? '')
+                ? $existingItem['slug']
+                : generateSlug($title, $pdo, $id, $tableName);
             $data = [
                 'title' => $title,
+                'slug' => $slug,
                 'description' => $description,
                 'pdf_path' => $pdfPath,
             ];
@@ -76,7 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $success = 'Record created successfully.';
             }
         } else {
-            $editingItem = $existingItem ?: ['id' => $id, 'title' => $title, 'description' => $description, 'pdf_path' => $pdfPath];
+             $editingItem = $existingItem ?: [
+                'id' => $id,
+                'title' => $title,
+                'slug' => null,
+                'description' => $description,
+                'pdf_path' => $pdfPath,
+            ];
         }
     }
 }
