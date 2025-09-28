@@ -2,24 +2,42 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/database.php';
+$idParam = $_GET['id'] ?? null;
+$id = is_numeric($idParam) ? (int) $idParam : 0;
+$article = $id > 0 ? fetchNewsById($id) : null;
 
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT) ?: 0;
-if ($id <= 0) {
-    http_response_code(404);
-    exit('Article not found.');
-}
 
-$article = fetchNewsById($id);
+echo "<script>console.log('ID: ' + " . json_encode($id) . ");</script>";
+
 if (!$article) {
     http_response_code(404);
-    exit('Article not found.');
+    $page_title = 'Article Not Found - News & Updates';
+    $activePage = 'news';
+    include __DIR__ . '/header.php';
+    ?>
+    <section class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <div class="bg-white shadow-sm rounded-3 p-5">
+                        <h1 class="display-5 mb-3">Article Not Found</h1>
+                        <p class="lead text-muted mb-4">The news article you are looking for may have been moved or deleted.</p>
+                        <a href="/news_update.php" class="btn btn-primary">Back to News &amp; Updates</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php
+    include __DIR__ . '/footer.php';
+    return;
 }
 
 $requestedSlug = isset($_GET['slug']) ? (string) $_GET['slug'] : '';
 $canonicalSlug = (string) ($article['slug'] ?? '');
 $canonicalUrl = buildNewsDetailUrl($article);
 
-if ($canonicalSlug !== '' && $requestedSlug !== $canonicalSlug) {
+if ($requestedSlug !== '' && $canonicalSlug !== '' && $requestedSlug !== $canonicalSlug) {
     header('Location: ' . $canonicalUrl, true, 301);
     exit;
 }
@@ -46,12 +64,12 @@ foreach (fetchLatestNews(6) as $recent) {
     }
 }
 ?>
-<section class="py-5 bg-light">
+<section class="py-5 bg-light mt-5">
     <div class="container py-4">
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="/index.php">Home</a></li>
-                <li class="breadcrumb-item"><a href="/news_update.php">News &amp; Updates</a></li>
+                <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+                <li class="breadcrumb-item"><a href="news_update.php">News &amp; Updates</a></li>
                 <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($article['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></li>
             </ol>
         </nav>
@@ -59,7 +77,7 @@ foreach (fetchLatestNews(6) as $recent) {
             <div class="col-lg-8">
                 <article class="bg-white shadow-sm rounded-3 p-4">
                     <header class="mb-4">
-                        <a class="btn btn-outline-primary btn-sm mb-3" href="/news_update.php">
+                        <a class="btn btn-outline-primary btn-sm mb-3" href="news_update.php">
                             <i class="bi bi-arrow-left"></i> Back to News
                         </a>
                         <h1 class="mb-3"><?= htmlspecialchars($article['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></h1>

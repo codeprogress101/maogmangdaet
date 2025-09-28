@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     debounceTimer = setTimeout(function () {
       performSearch(query);
-    }, 250);
+    }, 300);
   });
 
   if (searchInput.value.trim() !== '') {

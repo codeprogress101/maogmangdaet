@@ -18,6 +18,8 @@ const ACCOUNT_LOCK_DURATION = 15 * 60;       // 15 minutes lock duration.
 const UPLOAD_DIR = __DIR__ . '/uploads';
 const MAX_PDF_SIZE = 10 * 1024 * 1024; // 10 MB.
 
+// News specific configuration.
+const USE_SEO_NEWS_ROUTES = false; // Enable when .htaccess routes like /news/{id}/{slug} are supported.
 
 // News specific upload configuration.
 const NEWS_UPLOAD_DIR = __DIR__ . '/uploads/news';
