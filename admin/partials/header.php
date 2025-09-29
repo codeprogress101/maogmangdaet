@@ -4,6 +4,18 @@ if (!isset($pageTitle)) {
 }
 $user = current_user();
 $currentFile = basename($_SERVER['PHP_SELF']); // detect current page
+$navItems = [
+    ['module' => 'dashboard', 'label' => 'Dashboard', 'href' => 'dashboard.php'],
+    ['module' => 'executive', 'label' => 'Executive', 'href' => 'executive.php'],
+    ['module' => 'hearings', 'label' => 'Hearings', 'href' => 'hearings.php'],
+    ['module' => 'ordinances', 'label' => 'Ordinances', 'href' => 'ordinances.php'],
+    ['module' => 'resolutions', 'label' => 'Resolutions', 'href' => 'resolutions.php'],
+    ['module' => 'announcements', 'label' => 'Announcements', 'href' => 'announcements.php'],
+    ['module' => 'news', 'label' => 'News', 'href' => 'news.php'],
+    ['module' => 'contact_messages', 'label' => 'Messages', 'href' => 'contact_messages.php'],
+    ['module' => 'manage_users', 'label' => 'Users', 'href' => 'manage_users.php'],
+];
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -71,15 +83,23 @@ $currentFile = basename($_SERVER['PHP_SELF']); // detect current page
     <!-- Navbar links -->
     <div class="collapse navbar-collapse" id="adminNavbar">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-1">
-        <li class="nav-item"><a class="nav-link <?= $currentFile==='dashboard.php'?'active':'' ?>" href="dashboard.php">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link <?= $currentFile==='executive.php'?'active':'' ?>" href="executive.php">Executive</a></li>
-        <li class="nav-item"><a class="nav-link <?= $currentFile==='hearings.php'?'active':'' ?>" href="hearings.php">Hearings</a></li>
-        <li class="nav-item"><a class="nav-link <?= $currentFile==='ordinances.php'?'active':'' ?>" href="ordinances.php">Ordinances</a></li>
-        <li class="nav-item"><a class="nav-link <?= $currentFile==='resolutions.php'?'active':'' ?>" href="resolutions.php">Resolutions</a></li>
-        <li class="nav-item"><a class="nav-link <?= $currentFile==='announcements.php'?'active':'' ?>" href="announcements.php">Announcements</a></li>
-        <li class="nav-item"><a class="nav-link <?= $currentFile==='news.php'?'active':'' ?>" href="news.php">News</a></li>
-        <li class="nav-item"><a class="nav-link <?= $currentFile==='contact_messages.php'?'active':'' ?>" href="contact_messages.php">Messages</a></li>
+        <?php foreach ($navItems as $item): ?>
+            <?php
+                $module = $item['module'];
+                $shouldDisplay = $module === 'dashboard'
+                    ? (bool) $user
+                    : ($user && user_can_access($module));
 
+                if (!$shouldDisplay) {
+                    continue;
+                }
+
+                $isActive = $currentFile === basename($item['href']);
+            ?>
+            <li class="nav-item">
+                <a class="nav-link <?= $isActive ? 'active' : '' ?>" href="<?= e($item['href']) ?>"><?= e($item['label']) ?></a>
+            </li>
+        <?php endforeach; ?>
         <?php if ($user): ?>
           <!-- User Dropdown -->
           <li class="nav-item dropdown">

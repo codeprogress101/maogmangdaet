@@ -255,10 +255,10 @@ include 'header.php';
             <button class="list-group-item fw-bold text-center bg-primary text-white" disabled>
               Tourist Spots
             </button>
-            <button class="list-group-item list-group-item-action" data-coords="122.9556,14.1222">
+            <button class="list-group-item list-group-item-action" data-coords="122.98372,14.13569">
               📍 Bagasbas Beach
             </button>
-            <button class="list-group-item list-group-item-action" data-coords="122.9558,14.1144">
+            <button class="list-group-item list-group-item-action" data-coords="122.95459,14.11310">
               📍 Rizal Monument
             </button>
             <button class="list-group-item list-group-item-action" data-coords="122.9577,14.1165">

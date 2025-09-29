@@ -4,6 +4,22 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 
+const ROLE_ADMIN = 'admin';
+const ROLE_MIO = 'mio';
+const ROLE_SB = 'sb';
+
+const AVAILABLE_ROLES = [
+    ROLE_ADMIN,
+    ROLE_MIO,
+    ROLE_SB,
+];
+
+const ROLE_MODULE_PERMISSIONS = [
+    ROLE_ADMIN => ['*'],
+    ROLE_MIO => ['executive', 'announcements', 'news'],
+    ROLE_SB => ['hearings', 'ordinances', 'resolutions'],
+];
+
 const SLUGGABLE_TABLES = [
     'news',
     'announcements',
@@ -139,12 +155,68 @@ function redirect(string $path): void
     exit();
 }
 
+
+
+function add_flash(string $type, string $message): void
+{
+    if (!isset($_SESSION['flash_messages'])) {
+        $_SESSION['flash_messages'] = [];
+    }
+
+    $_SESSION['flash_messages'][$type][] = $message;
+}
+
+function get_flash_messages(): array
+{
+    if (!isset($_SESSION['flash_messages'])) {
+        return [];
+    }
+
+    $messages = $_SESSION['flash_messages'];
+    unset($_SESSION['flash_messages']);
+
+    return $messages;
+}
+
 /**
  * Return the currently authenticated user information.
  */
 function current_user(): ?array
 {
     return $_SESSION['user'] ?? null;
+}
+
+function user_role(): ?string
+{
+    $user = current_user();
+    $role = $user['role'] ?? null;
+
+    return is_valid_role($role) ? $role : null;
+}
+
+function is_valid_role(?string $role): bool
+{
+    return $role !== null && in_array($role, AVAILABLE_ROLES, true);
+}
+
+function user_can_access(string $module): bool
+{
+    $role = user_role();
+    if ($role === null) {
+        return false;
+    }
+
+    if ($module === 'dashboard') {
+        return true;
+    }
+
+    if ($role === ROLE_ADMIN) {
+        return true;
+    }
+
+    $allowedModules = ROLE_MODULE_PERMISSIONS[$role] ?? [];
+
+    return in_array($module, $allowedModules, true);
 }
 
 /**
@@ -154,6 +226,16 @@ function require_login(): void
 {
     if (!current_user()) {
         redirect('login.php');
+    }
+}
+
+function require_module_access(string $module): void
+{
+    require_login();
+
+    if (!user_can_access($module)) {
+        add_flash('error', 'You are not authorized to access that area.');
+        redirect('dashboard.php');
     }
 }
 
@@ -257,10 +339,12 @@ function attempt_login(PDO $pdo, string $email, string $password): array
     $stmt->execute(['id' => $user['id']]);
 
     session_regenerate_id(true); // Enforce new session ID on login.
+    $role = is_valid_role($user['role'] ?? null) ? $user['role'] : ROLE_ADMIN;
+
     $_SESSION['user'] = [
         'id' => (int) $user['id'],
         'email' => $user['email'],
-        'role' => $user['role'],
+        'role' => $role,
         'login_time' => time(),
     ];
     $_SESSION['last_activity'] = time();
