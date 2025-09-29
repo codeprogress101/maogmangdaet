@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(50) NOT NULL DEFAULT 'admin',
+    role ENUM('admin', 'mio', 'sb') NOT NULL DEFAULT 'admin',
     failed_attempts INT UNSIGNED NOT NULL DEFAULT 0,
     locked_until DATETIME NULL,
     last_login_at DATETIME NULL,

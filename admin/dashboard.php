@@ -6,39 +6,56 @@ require_login();
 
 $pageTitle = 'Dashboard Overview';
 
-$tables = [
-    'executive_issuances' => 'Executive Issuances',
-    'public_hearings' => 'Public Hearings',
-    'ordinances' => 'Ordinances',
-    'resolutions' => 'Resolutions',
-    'announcements' => 'Announcements',
-    'news' => 'News',
+$modules = [
+    'executive' => ['label' => 'Executive Issuances', 'table' => 'executive_issuances'],
+    'hearings' => ['label' => 'Public Hearings', 'table' => 'public_hearings'],
+    'ordinances' => ['label' => 'Ordinances', 'table' => 'ordinances'],
+    'resolutions' => ['label' => 'Resolutions', 'table' => 'resolutions'],
+    'announcements' => ['label' => 'Announcements', 'table' => 'announcements'],
+    'news' => ['label' => 'News', 'table' => 'news'],
 ];
 
 $stats = [];
-foreach ($tables as $table => $label) {
+foreach ($modules as $module => $meta) {
+    if (!user_can_access($module)) {
+        continue;
+    }
+
     $stats[] = [
-        'label' => $label,
-        'count' => get_table_count($pdo, $table),
+        'label' => $meta['label'],
+        'count' => get_table_count($pdo, $meta['table']),
     ];
 }
 
 $auditLogs = get_latest_audit_logs($pdo, 10);
+$flashMessages = get_flash_messages();
 
 include __DIR__ . '/partials/header.php';
 ?>
-<div class="row g-4 mb-4">
-    <?php foreach ($stats as $stat): ?>
-        <div class="col-md-4 col-lg-2">
-            <div class="card text-center border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <h5 class="card-title text-muted mb-2"><?= e($stat['label']) ?></h5>
-                    <p class="display-6 fw-bold text-primary mb-0"><?= (int) $stat['count'] ?></p>
+<?php if (!empty($flashMessages['error'])): ?>
+    <div class="alert alert-danger" role="alert">
+        <?php foreach ($flashMessages['error'] as $message): ?>
+            <div><?= e($message) ?></div>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
+
+<?php if ($stats): ?>
+    <div class="row g-4 mb-4">
+        <?php foreach ($stats as $stat): ?>
+            <div class="col-md-4 col-lg-2">
+                <div class="card text-center border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-muted mb-2"><?= e($stat['label']) ?></h5>
+                        <p class="display-6 fw-bold text-primary mb-0"><?= (int) $stat['count'] ?></p>
+                    </div>
                 </div>
             </div>
-        </div>
-    <?php endforeach; ?>
-</div>
+        <?php endforeach; ?>
+    </div>
+<?php else: ?>
+    <div class="alert alert-info">No modules are assigned to your role yet.</div>
+<?php endif; ?>
 
 <div class="card shadow-sm">
     <div class="card-header bg-white">

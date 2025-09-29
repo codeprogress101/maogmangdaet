@@ -59,13 +59,13 @@ tourismMap.addControl(directions, "top-left");
 const spots = [
   {
     name: "Bagasbas Beach",
-    coords: [122.9556, 14.1222],
+    coords: [122.98372,14.13569],
     img: "assets/img/bagasbas.jpg",
     desc: "A popular surfing destination with golden sands."
   },
   {
     name: "Rizal Monument",
-    coords: [122.9558, 14.1144],
+    coords: [122.95459,14.11310],
     img: "assets/img/rizal_monument.jpg",
     desc: "The first monument honoring Dr. Jose Rizal in the Philippines (1898)."
   },

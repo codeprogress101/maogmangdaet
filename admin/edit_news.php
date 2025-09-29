@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/init.php';
-require_login();
+require_module_access('news');
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 if ($id <= 0) {
