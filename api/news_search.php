@@ -13,10 +13,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 header('Content-Type: application/json; charset=utf-8');
 
 $query = trim((string) ($_GET['q'] ?? ''));
-$results = fetchNewsSearchResults($query, 20);
-
-$total = count($results);
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$page = max(1, $page);
+$articlesPerPage = 6;
 $html = '';
+
+if ($query === '') {
+    $allArticles = searchNews('');
+    $total = count($allArticles);
+    $totalPages = max(1, (int) ceil($total / $articlesPerPage));
+    $page = min($page, $totalPages);
+    $offset = ($page - 1) * $articlesPerPage;
+    $results = array_slice($allArticles, $offset, $articlesPerPage);
+} else {
+    $results = searchNews($query);
+    $total = count($results);
+}
 
 if ($total === 0) {
     $message = $query === ''
@@ -33,7 +45,9 @@ if ($total === 0) {
         . $linkHtml
         . '</div></div>';
 } else {
-    foreach ($results as $article) {
+   $resultsToRender = $query === '' ? $results : array_slice($results, 0, 20);
+
+    foreach ($resultsToRender as $article) {
         $detailUrl = buildNewsDetailUrl($article);
         $title = htmlspecialchars($article['title'] ?? 'Untitled', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $excerpt = htmlspecialchars(newsExcerpt($article['content'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -63,4 +77,7 @@ if ($total === 0) {
 echo json_encode([
     'html' => $html,
     'total' => $total,
+    'query' => $query,
+    'page' => $page,
+    'per_page' => $articlesPerPage,
 ]);

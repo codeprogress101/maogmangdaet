@@ -172,38 +172,38 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
-  const initialState = {
-    resultsHtml: resultsContainer.innerHTML,
-    statusHtml: statusText ? statusText.innerHTML : '',
-    countText: countBadge ? countBadge.textContent : '',
-    paginationHtml: paginationWrapper ? paginationWrapper.innerHTML : '',
+  const initialMarkup = {
+    results: resultsContainer.innerHTML,
+    status: statusText ? statusText.innerHTML : '',
+    badge: countBadge ? countBadge.textContent : '',
+    pagination: paginationWrapper ? paginationWrapper.innerHTML : '',
     paginationHidden: paginationWrapper ? paginationWrapper.classList.contains('d-none') : false,
   };
 
-  let activeController = null;
-  let debounceTimer = null;
+  const defaultStatusText = statusText ? (statusText.dataset.defaultText || initialMarkup.status) : '';
+  const badgeLabels = {
+    defaultText: countBadge ? (countBadge.dataset.defaultText || initialMarkup.badge) : '',
+    singular: countBadge ? (countBadge.dataset.singularLabel || 'article') : 'article',
+    plural: countBadge ? (countBadge.dataset.pluralLabel || 'articles') : 'articles',
+  };
 
-  function resetBadge(count, query) {
-    if (!countBadge) {
+  let debounceId = null;
+  let activeController = null;
+
+  function setStatus(count, query) {
+    if (!statusText) {
       return;
     }
 
     if (!query) {
-      const defaultText = countBadge.dataset.defaultText || initialState.countText;
-      if (defaultText) {
-        countBadge.textContent = defaultText;
+      statusText.innerHTML = initialMarkup.status;
+      if (defaultStatusText) {
+        statusText.dataset.defaultText = defaultStatusText;
       }
       return;
     }
 
-    const singular = countBadge.dataset.singularLabel || 'article';
-    const plural = countBadge.dataset.pluralLabel || 'articles';
-    const label = count === 1 ? singular : plural;
-    countBadge.textContent = count + ' ' + label + ' found';
-  }
-
-  function escapeHtml(value) {
-    return value.replace(/[&<>"']/g, function (char) {
+    const safeQuery = query.replace(/[&<>"']/g, function (char) {
       switch (char) {
         case '&': return '&amp;';
         case '<': return '&lt;';
@@ -213,26 +213,26 @@ document.addEventListener('DOMContentLoaded', function () {
         default: return char;
       }
     });
+
+    const prefix = count === 0
+      ? 'No results'
+      : 'Showing ' + count + ' result' + (count === 1 ? '' : 's');
+
+    statusText.innerHTML = prefix + ' for <strong>&ldquo;' + safeQuery + '&rdquo;</strong>.';
   }
 
-  function updateStatus(count, query) {
-    if (!statusText) {
+  function setBadge(count, query) {
+    if (!countBadge) {
       return;
     }
 
     if (!query) {
-      const defaultText = statusText.dataset.defaultText || '';
-      if (defaultText) {
-        statusText.textContent = defaultText;
-      } else {
-        statusText.innerHTML = initialState.statusHtml;
-      }
+      countBadge.textContent = badgeLabels.defaultText;
       return;
     }
 
-    const safeQuery = escapeHtml(query);
-    const prefix = count > 0 ? 'Showing top ' + count + ' result' + (count === 1 ? '' : 's') : 'No results';
-    statusText.innerHTML = prefix + ' for <strong>&ldquo;' + safeQuery + '&rdquo;</strong>.';
+    const label = count === 1 ? badgeLabels.singular : badgeLabels.plural;
+    countBadge.textContent = count + ' ' + label + ' found';
   }
 
   function restoreInitialState() {
@@ -241,40 +241,38 @@ document.addEventListener('DOMContentLoaded', function () {
       activeController = null;
     }
 
-    if (debounceTimer) {
-      clearTimeout(debounceTimer);
-      debounceTimer = null;
+    if (debounceId) {
+      clearTimeout(debounceId);
+      debounceId = null;
     }
 
-    resultsContainer.innerHTML = initialState.resultsHtml;
+    resultsContainer.innerHTML = initialMarkup.results;
+
     if (statusText) {
-      statusText.innerHTML = initialState.statusHtml;
+      statusText.innerHTML = initialMarkup.status;
     }
+
     if (countBadge) {
-      countBadge.textContent = initialState.countText;
+      countBadge.textContent = badgeLabels.defaultText;
     }
+
     if (paginationWrapper) {
-      paginationWrapper.innerHTML = initialState.paginationHtml;
-      if (initialState.paginationHidden) {
-        paginationWrapper.classList.add('d-none');
-      } else {
-        paginationWrapper.classList.remove('d-none');
-      }
+      paginationWrapper.innerHTML = initialMarkup.pagination;
+      paginationWrapper.classList.toggle('d-none', initialMarkup.paginationHidden);
     }
   }
 
-  function buildEndpointUrl(query) {
-    const rawEndpoint = (searchInput.dataset.searchEndpoint || 'api/news_search.php').trim();
+  function buildRequestUrl(query) {
+    const endpoint = (searchInput.dataset.searchEndpoint || 'api/news_search.php').trim() || 'api/news_search.php';
+    const url = new URL(endpoint, window.location.origin);
+    url.searchParams.set('q', query);
+    return url.toString();
+  }
 
-    try {
-      const resolved = new URL(rawEndpoint, window.location.href);
-      resolved.searchParams.set('q', query);
-      return resolved.toString();
-    } catch (error) {
-      const fallback = new URL('api/news_search.php', window.location.href);
-      fallback.searchParams.set('q', query);
-      return fallback.toString();
-    }
+  function renderError(query) {
+    resultsContainer.innerHTML = '<div class="col-12"><div class="alert alert-danger mb-0" role="alert">Unable to load search results. Please try again in a moment.</div></div>';
+    setBadge(0, query);
+    setStatus(0, query);
   }
 
   function performSearch(query) {
@@ -287,55 +285,63 @@ document.addEventListener('DOMContentLoaded', function () {
       activeController.abort();
     }
 
-    activeController = new AbortController();
-
-    const endpointUrl = buildEndpointUrl(query);
-      ? window.location.origin
-      : window.location.href;
-    const endpoint = new URL(endpointPath, baseForEndpoint);
-    endpoint.searchParams.set('q', query);
+    const controller = new AbortController();
+    activeController = controller;
 
     if (paginationWrapper) {
       paginationWrapper.classList.add('d-none');
     }
 
-    fetch(endpointUrl, { signal: activeController.signal, headers: { Accept: 'application/json' } })
+    fetch(buildRequestUrl(query), {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      credentials: 'same-origin',
+      signal: controller.signal,
+    })
       .then(function (response) {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Response not OK');
         }
         return response.json();
       })
       .then(function (payload) {
-        resultsContainer.innerHTML = payload.html || '';
-        resetBadge(payload.total || 0, query);
-        updateStatus(payload.total || 0, query);
+        if (!payload || typeof payload.html !== 'string') {
+          throw new Error('Invalid payload');
+        }
+
+        resultsContainer.innerHTML = payload.html;
+        setBadge(payload.total || 0, query);
+        setStatus(payload.total || 0, query);
       })
       .catch(function (error) {
         if (error.name === 'AbortError') {
           return;
         }
-
-        resultsContainer.innerHTML = '<div class="col-12"><div class="alert alert-danger mb-0" role="alert">Unable to load search results. Please try again in a moment.</div></div>';
-        resetBadge(0, query);
-        updateStatus(0, query);
+        renderError(query);
       });
   }
 
   function queueSearch() {
     const query = searchInput.value.trim();
 
-    if (debounceTimer) {
-      clearTimeout(debounceTimer);
+    if (debounceId) {
+      clearTimeout(debounceId);
     }
 
-    debounceTimer = setTimeout(function () {
+    debounceId = window.setTimeout(function () {
       performSearch(query);
     }, 300);
- }
+  }
 
   searchInput.addEventListener('input', queueSearch);
   searchInput.addEventListener('keyup', queueSearch);
+  searchInput.addEventListener('search', queueSearch);
+
+  if (searchInput.form) {
+    searchInput.form.addEventListener('submit', function (event) {
+      event.preventDefault();
+    });
+  }
 
   if (searchInput.value.trim() !== '') {
     performSearch(searchInput.value.trim());

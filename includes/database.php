@@ -144,7 +144,7 @@ function buildNewsDetailUrl(array $article): string
 
     return sprintf('/news/%d/%s', $id, rawurlencode($slug));
 }
-
+ 
 function publicUploadPath(?string $path): ?string
 {
     if ($path === null || $path === '') {
