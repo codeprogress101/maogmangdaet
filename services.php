@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/database.php';
+require_once __DIR__ . '/includes/feedback.php';
 
 $page_title = 'Municipal Services of Daet';
 $page_head_includes = <<<HTML
@@ -560,6 +561,64 @@ include 'header.php';
       </div>
       <div class="col-lg-4 text-lg-end">
         <a href="mailto:info@lgudaet.gov.ph" class="btn btn-primary btn-lg px-4">Connect with Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5" id="citizen-feedback">
+  <div class="container px-4 px-lg-5">
+    <div class="row g-5 align-items-start">
+      <div class="col-lg-5">
+        <h2 class="section-title fw-bold mb-3">Citizen Feedback Portal</h2>
+        <p class="text-muted mb-3">
+          Share health, permit, social services, or other community concerns directly with the LGU. Submit your feedback and receive a tracking number so you can follow progress anytime.
+        </p>
+        <ul class="list-unstyled text-muted small mb-0">
+          <li class="mb-2"><i class="bi bi-shield-check text-primary me-2"></i>Secure ticket tracking with email notifications.</li>
+          <li class="mb-2"><i class="bi bi-paperclip text-primary me-2"></i>Attach supporting documents (JPG, PNG, PDF, DOCX up to 5&nbsp;MB each).</li>
+          <li class="mb-0"><i class="bi bi-clock-history text-primary me-2"></i>Assigned to the right department with full update history.</li>
+        </ul>
+      </div>
+      <div class="col-lg-7">
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-4">
+            <h3 class="h5 fw-semibold mb-3">Submit your feedback</h3>
+            <form action="submit_feedback.php" method="post" enctype="multipart/form-data" novalidate>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="feedbackName" class="form-label">Full Name</label>
+                  <input type="text" class="form-control" id="feedbackName" name="name" maxlength="150" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="feedbackEmail" class="form-label">Email Address</label>
+                  <input type="email" class="form-control" id="feedbackEmail" name="email" maxlength="150" required>
+                </div>
+                <div class="col-12">
+                  <label for="feedbackCategory" class="form-label">Category</label>
+                  <select class="form-select" id="feedbackCategory" name="category" required>
+                    <option value="" selected disabled>Select a category</option>
+                    <?php foreach (FEEDBACK_CATEGORIES as $category): ?>
+                      <option value="<?= htmlspecialchars($category, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?= htmlspecialchars($category, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label for="feedbackMessage" class="form-label">Message</label>
+                  <textarea class="form-control" id="feedbackMessage" name="message" rows="5" maxlength="5000" required></textarea>
+                </div>
+                <div class="col-12">
+                  <label for="feedbackFiles" class="form-label">Attachments</label>
+                  <input class="form-control" type="file" id="feedbackFiles" name="attachments[]" accept=".jpg,.jpeg,.png,.pdf,.docx" multiple>
+                  <div class="form-text">Optional. Up to 5&nbsp;MB per file. Allowed types: JPG, JPEG, PNG, PDF, DOCX.</div>
+                </div>
+                <div class="col-12 text-end">
+                  <button type="submit" class="btn btn-primary px-4">Submit Feedback</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   </div>

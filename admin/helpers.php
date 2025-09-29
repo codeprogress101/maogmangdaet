@@ -7,17 +7,20 @@ require_once __DIR__ . '/config.php';
 const ROLE_ADMIN = 'admin';
 const ROLE_MIO = 'mio';
 const ROLE_SB = 'sb';
+const ROLE_DEPARTMENT_ADMIN = 'department_admin';
 
 const AVAILABLE_ROLES = [
     ROLE_ADMIN,
     ROLE_MIO,
     ROLE_SB,
+    ROLE_DEPARTMENT_ADMIN,
 ];
 
 const ROLE_MODULE_PERMISSIONS = [
     ROLE_ADMIN => ['*'],
     ROLE_MIO => ['executive', 'announcements', 'news'],
     ROLE_SB => ['hearings', 'ordinances', 'resolutions'],
+    ROLE_DEPARTMENT_ADMIN => ['feedback', 'ticket_reports'],
 ];
 
 const SLUGGABLE_TABLES = [
@@ -194,6 +197,15 @@ function user_role(): ?string
     return is_valid_role($role) ? $role : null;
 }
 
+function user_department(): ?string
+{
+    $user = current_user();
+    $department = $user['department'] ?? null;
+
+    return $department !== null && $department !== '' ? $department : null;
+}
+
+
 function is_valid_role(?string $role): bool
 {
     return $role !== null && in_array($role, AVAILABLE_ROLES, true);
@@ -345,6 +357,7 @@ function attempt_login(PDO $pdo, string $email, string $password): array
         'id' => (int) $user['id'],
         'email' => $user['email'],
         'role' => $role,
+        'department' => $user['department'] ?? null,
         'login_time' => time(),
     ];
     $_SESSION['last_activity'] = time();
