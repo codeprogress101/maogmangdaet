@@ -13,6 +13,8 @@ $navItems = [
     ['module' => 'announcements', 'label' => 'Announcements', 'href' => 'announcements.php'],
     ['module' => 'news', 'label' => 'News', 'href' => 'news.php'],
     ['module' => 'contact_messages', 'label' => 'Messages', 'href' => 'contact_messages.php'],
+    ['module' => 'feedback', 'label' => 'Citizen Feedback', 'href' => 'feedback_tickets.php'],
+    ['module' => 'ticket_reports', 'label' => 'Ticket Reports', 'href' => 'ticket_reports.php'],
     ['module' => 'manage_users', 'label' => 'Users', 'href' => 'manage_users.php'],
 ];
 

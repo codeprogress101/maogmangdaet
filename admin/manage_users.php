@@ -10,12 +10,14 @@ $roleLabels = [
     ROLE_ADMIN => 'Administrator',
     ROLE_MIO => 'MIO',
     ROLE_SB => 'SB',
+    ROLE_DEPARTMENT_ADMIN => 'Department Admin',
 ];
 
 $errors = [];
 $successMessages = [];
 $newUserEmail = '';
 $newUserRole = ROLE_MIO;
+$newUserDepartment = '';
 $minimumPasswordLength = 8;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -28,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $newUserEmail = trim($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
             $role = $_POST['role'] ?? '';
+            $department = trim($_POST['department'] ?? '');
 
             if (!filter_var($newUserEmail, FILTER_VALIDATE_EMAIL)) {
                 $errors[] = 'A valid email address is required.';
@@ -41,15 +44,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'Please choose a valid role.';
             }
 
+            if ($role === ROLE_DEPARTMENT_ADMIN) {
+                if ($department === '') {
+                    $errors[] = 'Department administrators must have an assigned department.';
+                } elseif (mb_strlen($department, 'UTF-8') > 100) {
+                    $errors[] = 'Departments must be 100 characters or fewer.';
+                }
+            } else {
+                $department = '';
+            }
+
             if (!$errors) {
                 $passwordHash = password_hash($password, PASSWORD_ARGON2ID);
 
-                try {
-                    $stmt = $pdo->prepare('INSERT INTO users (email, password_hash, role, failed_attempts, locked_until, last_login_at, created_at) VALUES (:email, :password_hash, :role, 0, NULL, NULL, NOW())');
+               try {
+                    $stmt = $pdo->prepare('INSERT INTO users (email, password_hash, role, department, failed_attempts, locked_until, last_login_at, created_at) VALUES (:email, :password_hash, :role, :department, 0, NULL, NULL, NOW())');
                     $stmt->execute([
                         'email' => $newUserEmail,
                         'password_hash' => $passwordHash,
                         'role' => $role,
+                        'department' => $department !== '' ? $department : null,
                     ]);
 
                     $successMessages[] = 'User account created successfully.';
@@ -58,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     $newUserEmail = '';
                     $newUserRole = ROLE_MIO;
+                    $newUserDepartment = '';
                 } catch (PDOException $exception) {
                     if ($exception->getCode() === '23000') {
                         $errors[] = 'A user with that email already exists.';
@@ -66,7 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
             } else {
+                
                 $newUserRole = is_valid_role($role) ? $role : $newUserRole;
+                $newUserDepartment = $department;
             }
             break;
 
@@ -74,6 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $userId = isset($_POST['id']) ? (int) $_POST['id'] : 0;
             $role = $_POST['role'] ?? '';
             $newPassword = $_POST['password'] ?? '';
+            $department = trim($_POST['department'] ?? '');
 
             if ($userId <= 0) {
                 $errors[] = 'Invalid user selected.';
@@ -94,11 +112,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
             }
 
+             if ($role === ROLE_DEPARTMENT_ADMIN) {
+                if ($department === '') {
+                    $errors[] = 'Department administrators must have an assigned department.';
+                    break;
+                }
+                if (mb_strlen($department, 'UTF-8') > 100) {
+                    $errors[] = 'Departments must be 100 characters or fewer.';
+                    break;
+                }
+            } else {
+                $department = '';
+            }
+
             $updateFields = [
                 'role' => $role,
                 'id' => $userId,
+                'department' => $department !== '' ? $department : null,
             ];
-            $updateSql = 'UPDATE users SET role = :role';
+            $updateSql = 'UPDATE users SET role = :role, department = :department';
             $passwordReset = false;
 
             if ($newPassword !== '') {
@@ -119,6 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($userId === $currentUserId) {
                 $_SESSION['user']['role'] = $role;
+                $_SESSION['user']['department'] = $department !== '' ? $department : null;
             }
 
             $message = 'User details updated successfully.';
@@ -178,7 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$stmt = $pdo->query('SELECT id, email, role, last_login_at, created_at FROM users ORDER BY email');
+$stmt = $pdo->query('SELECT id, email, role, department, last_login_at, created_at FROM users ORDER BY email');
 $users = $stmt->fetchAll();
 
 $pageTitle = 'Manage Users';
@@ -215,7 +248,7 @@ include __DIR__ . '/partials/header.php';
         min-width: 150px;
         max-width: 220px;
     }
-
+    .manage-users-page .update-form .department-input,
     .manage-users-page .update-form .password-input {
         flex: 2 1 220px;
         min-width: 200px;
@@ -227,6 +260,7 @@ include __DIR__ . '/partials/header.php';
 
     @media (max-width: 1199.98px) {
         .manage-users-page .update-form .role-select,
+        .manage-users-page .update-form .department-input,
         .manage-users-page .update-form .password-input,
         .manage-users-page .update-form .submit-btn {
             max-width: 100%;
@@ -285,6 +319,11 @@ include __DIR__ . '/partials/header.php';
                             <?php endforeach; ?>
                         </select>
                     </div>
+                    <div class="mb-4">
+                        <label for="new-department" class="form-label fw-semibold">Department</label>
+                        <input type="text" class="form-control" id="new-department" name="department" maxlength="100" value="<?= e($newUserDepartment) ?>" placeholder="Required for Department Admins">
+                        <div class="form-text">Leave blank for roles that do not manage a specific department.</div>
+                    </div>
                     <button type="submit" class="btn btn-primary w-100">Create User</button>
                 </form>
             </div>
@@ -303,6 +342,7 @@ include __DIR__ . '/partials/header.php';
                             <tr>
                                 <th scope="col">Email</th>
                                 <th scope="col">Role</th>
+                                <th scope="col">Department</th>
                                 <th scope="col" class="text-nowrap">Last Login</th>
                                 <th scope="col" class="text-nowrap">Created</th>
                                 <th scope="col" class="text-center">Update</th>
@@ -319,6 +359,13 @@ include __DIR__ . '/partials/header.php';
                                         <strong><?= e($userRow['email']) ?></strong>
                                     </td>
                                     <td><?= e($roleLabels[$userRow['role']] ?? ucfirst($userRow['role'])) ?></td>
+                                      <td>
+                                        <?php if (!empty($userRow['department'])): ?>
+                                            <?= e($userRow['department']) ?>
+                                        <?php else: ?>
+                                            <span class="text-muted">—</span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td class="text-nowrap">
                                         <?php if (!empty($userRow['last_login_at'])): ?>
                                             <?= e(date('M j, Y g:i A', strtotime($userRow['last_login_at']))) ?>
@@ -338,6 +385,9 @@ include __DIR__ . '/partials/header.php';
                                                         <option value="<?= e($roleValue) ?>" <?= $userRow['role'] === $roleValue ? 'selected' : '' ?>><?= e($label) ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
+                                            </div>
+                                             <div class="department-input">
+                                                <input type="text" class="form-control form-control-sm" name="department" maxlength="100" value="<?= e($userRow['department'] ?? '') ?>" placeholder="Department (if applicable)">
                                             </div>
                                             <div class="password-input">
                                                 <input type="password" class="form-control form-control-sm" name="password" placeholder="New password (optional)" autocomplete="new-password">

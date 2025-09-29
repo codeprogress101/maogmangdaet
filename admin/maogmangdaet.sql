@@ -106,6 +106,53 @@ CREATE TABLE `contact_messages` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `feedback_tickets`
+--
+
+CREATE TABLE `feedback_tickets` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `ticket_number` varchar(20) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `category` enum('Health','Permit','Social Services','Others') NOT NULL,
+  `message` text NOT NULL,
+  `assigned_to` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feedback_updates`
+--
+
+CREATE TABLE `feedback_updates` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `ticket_id` int(10) UNSIGNED NOT NULL,
+  `status` enum('Open','In Progress','Resolved','Closed') NOT NULL,
+  `admin_response` text DEFAULT NULL,
+  `attachment_path` varchar(255) DEFAULT NULL,
+  `assigned_to` varchar(100) DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_by` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feedback_attachments`
+--
+
+CREATE TABLE `feedback_attachments` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `ticket_id` int(10) UNSIGNED NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `executive_issuances`
 --
 
@@ -235,6 +282,7 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
   `role` varchar(50) NOT NULL DEFAULT 'admin',
+  `department` varchar(100) DEFAULT NULL,
   `failed_attempts` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `locked_until` datetime DEFAULT NULL,
   `last_login_at` datetime DEFAULT NULL,
@@ -245,9 +293,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `email`, `password_hash`, `role`, `failed_attempts`, `locked_until`, `last_login_at`, `created_at`) VALUES
-(1, 'admin@example.com', '$argon2id$v=19$m=65536,t=4,p=1$efv2ob26vUTg0OHRfyvqoA$x5+0+D6hvvHIHO22VzfUrRoVaDtD/P4xi+hxm2krRqk', 'admin', 0, NULL, '2025-09-28 22:55:50', '2025-09-28 15:48:30');
-
+INSERT INTO `users` (`id`, `email`, `password_hash`, `role`, `department`, `failed_attempts`, `locked_until`, `last_login_at`, `created_at`) VALUES
+(1, 'admin@example.com', '$argon2id$v=19$m=65536,t=4,p=1$efv2ob26vUTg0OHRfyvqoA$x5+0+D6hvvHIHO22VzfUrRoVaDtD/P4xi+hxm2krRqk', 'admin', NULL, 0, NULL, '2025-09-28 22:55:50', '2025-09-28 15:48:30');
 --
 -- Indexes for dumped tables
 --
@@ -271,6 +318,27 @@ ALTER TABLE `audit_logs`
 --
 ALTER TABLE `contact_messages`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `feedback_tickets`
+--
+ALTER TABLE `feedback_tickets`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `ticket_number` (`ticket_number`);
+
+--
+-- Indexes for table `feedback_updates`
+--
+ALTER TABLE `feedback_updates`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `feedback_updates_ticket_id_foreign` (`ticket_id`);
+
+--
+-- Indexes for table `feedback_attachments`
+--
+ALTER TABLE `feedback_attachments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `feedback_attachments_ticket_id_foreign` (`ticket_id`);
 
 --
 -- Indexes for table `executive_issuances`
@@ -337,6 +405,24 @@ ALTER TABLE `contact_messages`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `feedback_tickets`
+--
+ALTER TABLE `feedback_tickets`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `feedback_updates`
+--
+ALTER TABLE `feedback_updates`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `feedback_attachments`
+--
+ALTER TABLE `feedback_attachments`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `executive_issuances`
 --
 ALTER TABLE `executive_issuances`
@@ -381,6 +467,11 @@ ALTER TABLE `users`
 --
 ALTER TABLE `audit_logs`
   ADD CONSTRAINT `fk_audit_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ALTER TABLE `feedback_updates`
+  ADD CONSTRAINT `fk_feedback_updates_ticket` FOREIGN KEY (`ticket_id`) REFERENCES `feedback_tickets` (`id`) ON DELETE CASCADE;
+
+ALTER TABLE `feedback_attachments`
+  ADD CONSTRAINT `fk_feedback_attachments_ticket` FOREIGN KEY (`ticket_id`) REFERENCES `feedback_tickets` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
