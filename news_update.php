@@ -23,7 +23,7 @@ $page_head_includes = <<<HTML
     }
 
     .news-search .form-control {
-      border-radius: 2rem 0 0 2rem;
+      border-radius: 2rem;
       border-color: var(--news-primary);
       box-shadow: none;
     }
@@ -31,11 +31,6 @@ $page_head_includes = <<<HTML
     .news-search .form-control:focus {
       border-color: var(--news-primary);
       box-shadow: 0 0 0 0.25rem rgba(253, 126, 20, 0.2);
-    }
-
-    .news-search .btn-news {
-      border-radius: 0 2rem 2rem 0;
-      padding: 0.65rem 1.5rem;
     }
 
     .news-card {
@@ -143,6 +138,27 @@ $statusMessageHtml = $searchQuery !== ''
 $countLabel = $totalArticles === 1 ? 'article' : 'articles';
 $countText = sprintf('%d %s found', $totalArticles, $countLabel);
 
+$scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+$scriptDirectory = str_replace('\\', '/', dirname($scriptName));
+$scriptDirectory = rtrim($scriptDirectory, '/');
+if ($scriptDirectory === '.' || $scriptDirectory === '\\') {
+    $scriptDirectory = '';
+}
+$searchEndpointPath = ($scriptDirectory === '')
+    ? '/api/news_search.php'
+    : $scriptDirectory . '/api/news_search.php';
+
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$isSecure = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off')
+    || (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443);
+$scheme = $isSecure ? 'https' : 'http';
+$searchEndpointUrl = $host !== ''
+    ? $scheme . '://' . $host . $searchEndpointPath
+    : $searchEndpointPath;
+
+
+
+
 $page_footer_scripts = <<<'HTML'
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -247,6 +263,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  function buildEndpointUrl(query) {
+    const rawEndpoint = (searchInput.dataset.searchEndpoint || 'api/news_search.php').trim();
+
+    try {
+      const resolved = new URL(rawEndpoint, window.location.href);
+      resolved.searchParams.set('q', query);
+      return resolved.toString();
+    } catch (error) {
+      const fallback = new URL('api/news_search.php', window.location.href);
+      fallback.searchParams.set('q', query);
+      return fallback.toString();
+    }
+  }
+
   function performSearch(query) {
     if (!query) {
       restoreInitialState();
@@ -259,14 +289,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     activeController = new AbortController();
 
-    const endpoint = new URL('api/news_search.php', window.location.origin);
+    const endpointUrl = buildEndpointUrl(query);
+      ? window.location.origin
+      : window.location.href;
+    const endpoint = new URL(endpointPath, baseForEndpoint);
     endpoint.searchParams.set('q', query);
 
     if (paginationWrapper) {
       paginationWrapper.classList.add('d-none');
     }
 
-    fetch(endpoint.toString(), { signal: activeController.signal, headers: { Accept: 'application/json' } })
+    fetch(endpointUrl, { signal: activeController.signal, headers: { Accept: 'application/json' } })
       .then(function (response) {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -289,8 +322,8 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 
-  searchInput.addEventListener('input', function () {
-    const query = this.value.trim();
+  function queueSearch() {
+    const query = searchInput.value.trim();
 
     if (debounceTimer) {
       clearTimeout(debounceTimer);
@@ -299,7 +332,10 @@ document.addEventListener('DOMContentLoaded', function () {
     debounceTimer = setTimeout(function () {
       performSearch(query);
     }, 300);
-  });
+ }
+
+  searchInput.addEventListener('input', queueSearch);
+  searchInput.addEventListener('keyup', queueSearch);
 
   if (searchInput.value.trim() !== '') {
     performSearch(searchInput.value.trim());
@@ -341,10 +377,7 @@ include 'header.php';
       <div class="col-lg-5 mt-3 mt-lg-0">
          <form class="news-search" method="get" action="news_update.php">
           <div class="input-group">
-             <input type="text" id="newsSearchInput" name="q" class="form-control" placeholder="Search news, events, or categories" value="<?php echo htmlspecialchars($searchQuery, ENT_QUOTES, 'UTF-8'); ?>" aria-label="Search news" autocomplete="off" />
-            <button class="btn btn-news" type="submit">
-              <i class="bi bi-search me-1"></i> Search
-            </button>
+             <input type="text" id="newsSearchInput" name="q" class="form-control" placeholder="Search news, events, or categories" value="<?php echo htmlspecialchars($searchQuery, ENT_QUOTES, 'UTF-8'); ?>" aria-label="Search news" autocomplete="off" data-search-endpoint="<?= htmlspecialchars($searchEndpointUrl, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>" />
           </div>
         </form>
       </div>

@@ -396,7 +396,7 @@ include 'header.php';
               
               <?php $featuredImagePath = publicUploadPath($featuredNews['image_path'] ?? null); ?>
               <?php if ($featuredImagePath): ?>
-                <img class="img-fluid mb-3 mb-lg-0 w-100 rounded shadow-sm" src="<?= htmlspecialchars($featuredImagePath, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>"  alt="<?= $featuredTitle ?>">
+                <img class="img-fluid mb-3 mb-lg-0 w-100 rounded shadow-sm" src="<?= publicUploadPath($featuredNews['image_path']); ?>"  alt="<?= $featuredTitle ?>">
               <?php else: ?>
                 <div class="bg-secondary-subtle rounded mb-3 mb-lg-0 w-100 d-flex align-items-center justify-content-center" style="min-height: 320px;">
                   <span class="text-muted">No image available</span>
