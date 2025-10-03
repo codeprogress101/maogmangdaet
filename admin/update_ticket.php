@@ -1,10 +1,10 @@
-
 <?php
 declare(strict_types=1);
 
 require_once __DIR__ . '/init.php';
 require_module_access('feedback');
 require_once __DIR__ . '/../includes/feedback.php';
+require_once __DIR__ . '/../includes/mailer.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('feedback_tickets.php');
@@ -134,22 +134,27 @@ try {
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $trackingLink = 'https://' . $host . '/track_feedback.php?ticket=' . rawurlencode((string) $ticket['ticket_number']);
 
-$emailSubject = sprintf('Update on your ticket %s', $ticket['ticket_number']);
+
+$safeNameForEmail = normalize_email_text((string) $ticket['name']);
+$safeCategory = normalize_email_text((string) $ticket['category']);
+$safeStatus = normalize_email_text($status);
+$safeAssigned = normalize_email_text($assignedTo ?? 'Unassigned');
+$safeTrackingLink = normalize_email_text($trackingLink);
+
+$emailSubject = sprintf('Update on your ticket %s', normalize_email_text((string) $ticket['ticket_number']));
 $emailBodyLines = [
-    sprintf('Dear %s,', $ticket['name']),
+    sprintf('Dear %s,', $safeNameForEmail !== '' ? $safeNameForEmail : 'Citizen'),
     '',
-    sprintf('Your feedback ticket regarding %s has been updated.', $ticket['category']),
-    sprintf('Status: %s', $status),
+    sprintf('Your feedback ticket regarding %s has been updated.', $safeCategory !== '' ? $safeCategory : 'your submission'),
+    sprintf('Current Status: %s', $safeStatus),
+    sprintf('Assigned Department: %s', $safeAssigned),
 ];
 
 if ($adminResponse !== '') {
     $emailBodyLines[] = '';
     $emailBodyLines[] = 'Response:';
-    $emailBodyLines[] = $adminResponse;
+    $emailBodyLines[] = normalize_email_text($adminResponse);
 }
-
-$emailBodyLines[] = '';
-$emailBodyLines[] = 'Assigned to: ' . ($assignedTo ?? 'Unassigned');
 
 if ($attachmentPath) {
     $emailBodyLines[] = '';
@@ -158,7 +163,7 @@ if ($attachmentPath) {
 
 $emailBodyLines[] = '';
 $emailBodyLines[] = 'Track your ticket here:';
-$emailBodyLines[] = $trackingLink;
+$emailBodyLines[] = $safeTrackingLink;
 $emailBodyLines[] = '';
 $emailBodyLines[] = 'Thank you,';
 $emailBodyLines[] = 'Municipal Government of Daet';
@@ -170,7 +175,8 @@ $emailHeaders = [
 ];
 
 if (filter_var($ticket['email'], FILTER_VALIDATE_EMAIL)) {
-    @mail($ticket['email'], $emailSubject, implode("\n", $emailBodyLines), implode("\r\n", $emailHeaders));
+    $emailBody = implode(PHP_EOL, $emailBodyLines);
+    sendMail($ticket['email'], $emailSubject, $emailBody);
 }
 
 add_flash('success', 'Ticket updated successfully.');

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/feedback.php';
+require_once __DIR__ . '/includes/mailer.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -185,43 +186,43 @@ $savedFileNames = array_map(static function (string $path): string {
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $trackingLink = 'https://' . $host . '/track_feedback.php?ticket=' . rawurlencode($ticketNumber);
 
-$emailSubject = sprintf('Citizen Feedback Ticket %s', $ticketNumber);
+$safeNameForEmail = normalize_email_text($name);
+$safeCategory = normalize_email_text($category);
+$safeMessage = normalize_email_text($message);
+$safeTrackingLink = normalize_email_text($trackingLink);
+
+$emailSubject = sprintf('Your feedback has been submitted (Ticket %s)', $ticketNumber);
 $emailBodyLines = [
-    sprintf('Dear %s,', $name),
+    sprintf('Dear %s,', $safeNameForEmail !== '' ? $safeNameForEmail : 'Citizen'),
     '',
-    'Thank you for reaching out to the Municipal Government of Daet. Your feedback has been received and recorded with the following details:',
-    sprintf('Ticket Number: %s', $ticketNumber),
-    sprintf('Category: %s', $category),
+    'Thank you for reaching out to the Municipal Government of Daet. Your feedback has been received with the following details:',
+    sprintf('Ticket Number: %s', normalize_email_text((string) $ticketNumber)),
+    sprintf('Category: %s', $safeCategory),
     '',
     'Message:',
-    $message,
+    $safeMessage !== '' ? $safeMessage : '[No message provided]',
 ];
 
 if ($savedFileNames) {
     $emailBodyLines[] = '';
     $emailBodyLines[] = 'Attachments:';
     foreach ($savedFileNames as $fileName) {
-        $emailBodyLines[] = ' - ' . $fileName;
+        $emailBodyLines[] = ' - ' . normalize_email_text($fileName);
     }
 }
 
 $emailBodyLines[] = '';
 $emailBodyLines[] = 'You can track the status of your ticket at any time using the link below:';
-$emailBodyLines[] = $trackingLink;
+$emailBodyLines[] = $safeTrackingLink;
 $emailBodyLines[] = '';
 $emailBodyLines[] = 'This is an automated confirmation email. Our team will review your submission and keep you updated.';
 $emailBodyLines[] = '';
 $emailBodyLines[] = 'Sincerely,';
 $emailBodyLines[] = 'Municipal Government of Daet';
 
-$emailHeaders = [
-    'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=UTF-8',
-    'From: no-reply@' . $host,
-];
-
 if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    @mail($email, $emailSubject, implode("\n", $emailBodyLines), implode("\r\n", $emailHeaders));
+    $emailBody = implode(PHP_EOL, $emailBodyLines);
+    sendMail($email, $emailSubject, $emailBody);
 }
 
 $page_title = 'Feedback Submitted';
