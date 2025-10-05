@@ -13,6 +13,7 @@ $latestOrdinances = [];
 $latestResolutions = [];
 $latestIssuances = [];
 
+
 try {
     $latestOrdinances = fetchLatestDocuments('ordinances', 5);
 } catch (Throwable $exception) {
